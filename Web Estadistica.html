@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -199,38 +199,35 @@
           </div>
         </div>
 
-        <!-- Sección de Álbumes de Rock Nacional Recomendados -->
-        <div id="dashboard-rock-nacional" class="bg-slate-900/80 border border-slate-800 rounded-xl p-6 shadow-lg backdrop-blur-sm relative overflow-hidden space-y-6">
-          <!-- Decoración ambiental de fondo -->
-          <div class="absolute -top-24 -right-24 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
-          <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <!-- Sección de Música para Estudiar: Rock Nacional -->
+        <div id="dashboard-rock-nacional" class="bg-slate-900/80 border border-slate-800/80 rounded-xl p-5 shadow-lg backdrop-blur-sm relative overflow-hidden">
+          <!-- Decoración ambiental sutil de fondo -->
+          <div class="absolute -top-16 -right-16 w-52 h-52 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+          <div class="absolute -bottom-16 -left-16 w-52 h-52 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-          <!-- Cabecera de la sección -->
-          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10 pb-4 border-b border-slate-800/80">
+          <div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <!-- Título y descripción compacta -->
             <div>
-              <div class="flex flex-wrap items-center gap-2 mb-2">
+              <div class="flex items-center gap-2 mb-1.5">
                 <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                   <i data-lucide="disc" class="w-3.5 h-3.5 animate-spin-slow"></i>
                   Banda Sonora de Estudio
                 </span>
-                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700">
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-800 text-slate-400 border border-slate-700">
+                  50 Álbumes
+                </span>
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400/90 border border-emerald-500/20">
                   <svg class="w-3 h-3 text-[#1DB954]" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.516 17.306c-.22.357-.685.47-1.04.25-2.85-1.742-6.438-2.136-10.665-1.17-.406.094-.813-.16-.906-.564-.093-.406.16-.813.564-.906 4.63-1.056 8.59-.614 11.797 1.35.356.22.47.684.25 1.04zm1.472-3.272c-.276.446-.86.588-1.306.312-3.262-2.005-8.236-2.587-12.094-1.414-.503.153-1.034-.135-1.187-.638-.153-.503.135-1.034.638-1.187 4.41-1.338 9.9-0.69 13.637 1.62.446.276.588.86.312 1.307zm.127-3.414C15.22 8.3 8.79 8.086 5.12 9.2c-.6.182-1.23-.16-1.412-.76-.182-.6.16-1.23.76-1.412 4.237-1.286 11.34-1.036 15.82 1.626.54.32.716 1.02.395 1.56-.32.54-1.02.716-1.56.395z"/>
                   </svg>
                   Spotify Direct
                 </span>
-                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                  <i data-lucide="headphones" class="w-3 h-3"></i>
-                  50 Obras Maestras
-                </span>
               </div>
-              <h2 class="text-2xl font-bold text-slate-100 flex items-center gap-2">
-                Rock Nacional: 50 Álbumes Esenciales
-              </h2>
-              <p class="text-sm text-slate-400">Selección legendaria para motivar y acompañar tus horas de estudio en Estadística.</p>
+              <h3 class="text-lg font-bold text-slate-100">Banda Sonora: Rock Nacional</h3>
+              <p class="text-xs text-slate-400">Presioná para elegir un disco al azar y escucharlo en Spotify mientras estudiás.</p>
             </div>
 
-            <!-- Botones de Acción -->
+            <!-- Botón de Sorteo Rápido -->
             <div class="flex items-center gap-2 shrink-0">
               <button onclick="pickRandomRockAlbum()" class="flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:from-emerald-500 hover:to-teal-500 transition-all shadow-md shadow-emerald-950/40 hover:scale-105 active:scale-95 cursor-pointer">
                 <i data-lucide="shuffle" class="w-4 h-4"></i>
@@ -239,59 +236,12 @@
             </div>
           </div>
 
-          <!-- Banner de Álbum Recomendado / Azar -->
-          <div id="rock-spotlight-banner" class="hidden relative p-4 rounded-xl border border-emerald-500/40 bg-gradient-to-r from-emerald-950/40 via-slate-900 to-slate-900 shadow-lg">
-            <!-- Rellenado por JS -->
-          </div>
-
-          <!-- Barra de Búsqueda y Filtros -->
-          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 relative z-10">
-            <!-- Buscador -->
-            <div class="relative flex-1 max-w-md">
-              <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500"></i>
-              <input 
-                type="text" 
-                id="rock-search-input" 
-                oninput="handleRockSearch(this.value)" 
-                placeholder="Buscar por álbum, banda o tema clave..." 
-                class="w-full bg-slate-950/80 border border-slate-800 rounded-lg pl-9 pr-9 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500/60 transition-colors"
-              />
-              <button id="rock-search-clear" onclick="clearRockSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 cursor-pointer">
-                <i data-lucide="x" class="w-4 h-4"></i>
-              </button>
-            </div>
-
-            <!-- Filtros de Época -->
-            <div class="flex flex-wrap items-center gap-1.5" id="rock-decade-filters">
-              <button onclick="setRockDecadeFilter('all')" data-decade="all" class="rock-filter-btn active px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 transition-colors cursor-pointer">
-                Todos (50)
-              </button>
-              <button onclick="setRockDecadeFilter('70s')" data-decade="70s" class="rock-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors cursor-pointer">
-                60s & 70s
-              </button>
-              <button onclick="setRockDecadeFilter('80s')" data-decade="80s" class="rock-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors cursor-pointer">
-                80s Dorada
-              </button>
-              <button onclick="setRockDecadeFilter('90s')" data-decade="90s" class="rock-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors cursor-pointer">
-                90s Clásicos
-              </button>
-              <button onclick="setRockDecadeFilter('2000s')" data-decade="2000s" class="rock-filter-btn px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors cursor-pointer">
-                2000s+
-              </button>
-            </div>
-          </div>
-
-          <!-- Contador y detalle -->
-          <div class="flex items-center justify-between text-xs text-slate-400 pt-1">
-            <span id="rock-results-text">Mostrando 50 de 50 álbumes</span>
-            <span class="text-slate-500 italic hidden sm:inline">Haz clic en "Escuchar en Spotify" para reproducir directamente</span>
-          </div>
-
-          <!-- Grid de Álbumes -->
-          <div id="rock-albums-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pt-1">
-            <!-- Renderizado por JS -->
+          <!-- Contenedor del Álbum Elegido (Reemplaza la grilla masiva) -->
+          <div id="rock-selected-album-container" class="mt-4 pt-4 border-t border-slate-800/80 relative z-10">
+            <!-- Renderizado dinámicamente con JS -->
           </div>
         </div>
+
       </div>
 
       <div id="view-temario" class="view-section hidden-section space-y-6 h-full flex flex-col animate-in-slide">
@@ -3109,9 +3059,9 @@ Demuestre que:
       lucide.createIcons();
     };
 
-    // ==========================================
-    // SECCIÓN 50 ÁLBUMES DE ROCK NACIONAL
-    // ==========================================
+    // =======================================================
+    // SECCIÓN 50 ÁLBUMES DE ROCK NACIONAL E INDIO SOLARI
+    // =======================================================
     const ROCK_NACIONAL_ALBUMS = [
       {
         id: 1,
@@ -3137,14 +3087,14 @@ Demuestre que:
       },
       {
         id: 3,
-        album: "Artaud",
-        artist: "Pescado Rabioso",
-        year: 1973,
-        decade: "70s",
-        genre: "Rock Progresivo / Acústico",
-        track: "Bajan",
-        gradient: "linear-gradient(135deg, #65a30d 0%, #15803d 40%, #eab308 100%)",
-        spotifyUrl: "https://open.spotify.com/search/Artaud%20Pescado%20Rabioso"
+        album: "Gulp!",
+        artist: "Patricio Rey y sus Redonditos de Ricota",
+        year: 1985,
+        decade: "80s",
+        genre: "Rock / Post-Punk",
+        track: "La Bestia Pop",
+        gradient: "linear-gradient(135deg, #1e3a8a 0%, #0f172a 60%, #b91c1c 100%)",
+        spotifyUrl: "https://open.spotify.com/search/Gulp%20Patricio%20Rey"
       },
       {
         id: 4,
@@ -3170,25 +3120,25 @@ Demuestre que:
       },
       {
         id: 6,
-        album: "La Grasa de las Capitales",
-        artist: "Serú Girán",
-        year: 1979,
-        decade: "70s",
-        genre: "Rock Progresivo",
-        track: "Seminare",
-        gradient: "linear-gradient(135deg, #ea580c 0%, #7c2d12 60%, #172554 100%)",
-        spotifyUrl: "https://open.spotify.com/search/La%20Grasa%20de%20las%20Capitales%20Seru%20Giran"
+        album: "Un Baión para el Ojo Idiota",
+        artist: "Patricio Rey y sus Redonditos de Ricota",
+        year: 1988,
+        decade: "80s",
+        genre: "Rock / Hard Rock",
+        track: "Todo Un Palo",
+        gradient: "linear-gradient(135deg, #78350f 0%, #451a03 50%, #1c1917 100%)",
+        spotifyUrl: "https://open.spotify.com/search/Un%20Baion%20para%20el%20Ojo%20Idiota%20Patricio%20Rey"
       },
       {
         id: 7,
-        album: "Almendra",
-        artist: "Almendra",
-        year: 1969,
-        decade: "70s",
-        genre: "Rock Fundacional / Psicodélico",
-        track: "Muchacha (Ojos de Papel)",
-        gradient: "linear-gradient(135deg, #be123c 0%, #881337 50%, #701a75 100%)",
-        spotifyUrl: "https://open.spotify.com/search/Almendra%20Almendra"
+        album: "La Mosca y la Sopa",
+        artist: "Patricio Rey y sus Redonditos de Ricota",
+        year: 1991,
+        decade: "90s",
+        genre: "Rock and Roll",
+        track: "El Pibe de los Astilleros",
+        gradient: "linear-gradient(135deg, #b91c1c 0%, #7f1d1d 50%, #18181b 100%)",
+        spotifyUrl: "https://open.spotify.com/search/La%20Mosca%20y%20la%20Sopa%20Patricio%20Rey"
       },
       {
         id: 8,
@@ -3247,14 +3197,14 @@ Demuestre que:
       },
       {
         id: 13,
-        album: "El Jardín de los Presentes",
-        artist: "Invisible",
-        year: 1976,
-        decade: "70s",
-        genre: "Tango Rock / Progresivo",
-        track: "El Anillo del Capitán Beto",
-        gradient: "linear-gradient(135deg, #0f766e 0%, #134e4a 50%, #0369a1 100%)",
-        spotifyUrl: "https://open.spotify.com/search/El%20Jardin%20de%20los%20Presentes%20Invisible"
+        album: "Lobo Suelto, Cordero Atado (Vol. 1)",
+        artist: "Patricio Rey y sus Redonditos de Ricota",
+        year: 1993,
+        decade: "90s",
+        genre: "Rock / Hard Rock",
+        track: "Un Ángel para tu Soledad",
+        gradient: "linear-gradient(135deg, #1e293b 0%, #0f172a 60%, #dc2626 100%)",
+        spotifyUrl: "https://open.spotify.com/search/Lobo%20Suelto%20Cordero%20Atado%20Patricio%20Rey"
       },
       {
         id: 14,
@@ -3269,14 +3219,14 @@ Demuestre que:
       },
       {
         id: 15,
-        album: "Confesiones de Invierno",
-        artist: "Sui Generis",
-        year: 1973,
-        decade: "70s",
-        genre: "Folk Rock",
-        track: "Rasguña las Piedras",
-        gradient: "linear-gradient(135deg, #0369a1 0%, #075985 50%, #0f172a 100%)",
-        spotifyUrl: "https://open.spotify.com/search/Confesiones%20de%20Invierno%20Sui%20Generis"
+        album: "Lobo Suelto, Cordero Atado (Vol. 2)",
+        artist: "Patricio Rey y sus Redonditos de Ricota",
+        year: 1993,
+        decade: "90s",
+        genre: "Rock / Hard Rock",
+        track: "Gran Lady",
+        gradient: "linear-gradient(135deg, #09090b 0%, #27272a 50%, #991b1b 100%)",
+        spotifyUrl: "https://open.spotify.com/search/Lobo%20Suelto%20Cordero%20Atado%20Vol%202%20Patricio%20Rey"
       },
       {
         id: 16,
@@ -3379,36 +3329,36 @@ Demuestre que:
       },
       {
         id: 25,
-        album: "La Biblia",
-        artist: "Vox Dei",
-        year: 1971,
-        decade: "70s",
-        genre: "Rock Progresivo / Sinfónico",
-        track: "Génesis",
-        gradient: "linear-gradient(135deg, #b45309 0%, #78350f 50%, #374151 100%)",
-        spotifyUrl: "https://open.spotify.com/search/La%20Biblia%20Vox%20Dei"
+        album: "Último Bondi a Finisterre",
+        artist: "Patricio Rey y sus Redonditos de Ricota",
+        year: 1998,
+        decade: "90s",
+        genre: "Rock Electrónico / Alternativo",
+        track: "Gualicho",
+        gradient: "linear-gradient(135deg, #0284c7 0%, #0369a1 50%, #0f172a 100%)",
+        spotifyUrl: "https://open.spotify.com/search/Ultimo%20Bondi%20a%20Finisterre%20Patricio%20Rey"
       },
       {
         id: 26,
-        album: "Volumen 2",
-        artist: "Pappo's Blues",
-        year: 1972,
-        decade: "70s",
-        genre: "Blues Rock / Hard Rock",
-        track: "El Tren de las 16",
-        gradient: "linear-gradient(135deg, #374151 0%, #18181b 50%, #b91c1c 100%)",
-        spotifyUrl: "https://open.spotify.com/search/Pappo's%20Blues%20Volumen%202"
+        album: "Momo Sampler",
+        artist: "Patricio Rey y sus Redonditos de Ricota",
+        year: 2000,
+        decade: "2000s",
+        genre: "Rock Conceptual / Fusión",
+        track: "Música para Pastillas",
+        gradient: "linear-gradient(135deg, #713f12 0%, #451a03 50%, #1e1b4b 100%)",
+        spotifyUrl: "https://open.spotify.com/search/Momo%20Sampler%20Patricio%20Rey"
       },
       {
         id: 27,
-        album: "Manal",
-        artist: "Manal",
-        year: 1970,
-        decade: "70s",
-        genre: "Blues Rock / R&B",
-        track: "Jugo de Tomate Frío",
-        gradient: "linear-gradient(135deg, #e11d48 0%, #881337 50%, #1e293b 100%)",
-        spotifyUrl: "https://open.spotify.com/search/Manal%20Manal"
+        album: "El Tesoro de los Inocentes (Bingo Fuel)",
+        artist: "Indio Solari y Los Fundamentalistas del Aire Acondicionado",
+        year: 2004,
+        decade: "2000s",
+        genre: "Rock / Art Rock",
+        track: "El Charro Chino",
+        gradient: "linear-gradient(135deg, #991b1b 0%, #581c87 50%, #09090b 100%)",
+        spotifyUrl: "https://open.spotify.com/search/El%20Tesoro%20de%20los%20Inocentes%20Indio%20Solari"
       },
       {
         id: 28,
@@ -3522,14 +3472,14 @@ Demuestre que:
       },
       {
         id: 38,
-        album: "Vida",
-        artist: "Sui Generis",
-        year: 1972,
-        decade: "70s",
-        genre: "Folk Rock Acústico",
-        track: "Canción Para Mi Muerte",
-        gradient: "linear-gradient(135deg, #78716c 0%, #44403c 50%, #0284c7 100%)",
-        spotifyUrl: "https://open.spotify.com/search/Vida%20Sui%20Generis"
+        album: "Porco Rex",
+        artist: "Indio Solari y Los Fundamentalistas del Aire Acondicionado",
+        year: 2007,
+        decade: "2000s",
+        genre: "Rock / Hard Rock",
+        track: "Flight 956",
+        gradient: "linear-gradient(135deg, #881337 0%, #4c0519 50%, #1e293b 100%)",
+        spotifyUrl: "https://open.spotify.com/search/Porco%20Rex%20Indio%20Solari"
       },
       {
         id: 39,
@@ -3654,186 +3604,90 @@ Demuestre que:
       },
       {
         id: 50,
-        album: "Treinta Minutos de Vida",
-        artist: "Moris",
-        year: 1970,
-        decade: "70s",
-        genre: "Rock Acústico Fundacional",
-        track: "El Oso",
-        gradient: "linear-gradient(135deg, #a16207 0%, #713f12 50%, #0f172a 100%)",
-        spotifyUrl: "https://open.spotify.com/search/Treinta%20Minutos%20de%20Vida%20Moris"
+        album: "El Perfume de la Tempestad",
+        artist: "Indio Solari y Los Fundamentalistas del Aire Acondicionado",
+        year: 2010,
+        decade: "2010s",
+        genre: "Rock / Post-Industrial",
+        track: "Todos a los Botes!",
+        gradient: "linear-gradient(135deg, #374151 0%, #111827 50%, #0d9488 100%)",
+        spotifyUrl: "https://open.spotify.com/search/El%20Perfume%20de%20la%20Tempestad%20Indio%20Solari"
       }
     ];
 
-    let rockSearchQuery = '';
-    let rockActiveDecade = 'all';
-
-    const getFilteredRockAlbums = () => {
-      return ROCK_NACIONAL_ALBUMS.filter(album => {
-        const matchesDecade = (rockActiveDecade === 'all') || (album.decade === rockActiveDecade);
-        if (!matchesDecade) return false;
-        
-        if (!rockSearchQuery) return true;
-        const q = rockSearchQuery.toLowerCase();
-        return (
-          album.album.toLowerCase().includes(q) ||
-          album.artist.toLowerCase().includes(q) ||
-          album.track.toLowerCase().includes(q) ||
-          album.genre.toLowerCase().includes(q) ||
-          String(album.year).includes(q)
-        );
-      });
-    };
+    let currentRockAlbum = null;
 
     const renderRockNacionalSection = () => {
-      const container = document.getElementById('rock-albums-grid');
-      const resultsText = document.getElementById('rock-results-text');
+      const container = document.getElementById('rock-selected-album-container');
       if (!container) return;
 
-      const filtered = getFilteredRockAlbums();
-
-      if (resultsText) {
-        resultsText.innerText = `Mostrando ${filtered.length} de ${ROCK_NACIONAL_ALBUMS.length} álbumes`;
+      if (!currentRockAlbum) {
+        currentRockAlbum = ROCK_NACIONAL_ALBUMS[Math.floor(Math.random() * ROCK_NACIONAL_ALBUMS.length)];
       }
 
-      if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="col-span-full p-8 text-center bg-slate-950/40 rounded-xl border border-slate-800/80">
-            <i data-lucide="music" class="w-8 h-8 text-slate-600 mx-auto mb-2"></i>
-            <p class="text-slate-400 font-medium text-sm">No se encontraron álbumes que coincidan con "${rockSearchQuery}"</p>
-            <button onclick="clearRockSearch()" class="mt-3 px-3 py-1 text-xs text-emerald-400 hover:text-emerald-300 underline cursor-pointer">Limpiar búsqueda</button>
-          </div>
-        `;
-        lucide.createIcons();
-        return;
-      }
+      const album = currentRockAlbum;
 
-      container.innerHTML = filtered.map(album => `
-        <div class="group relative bg-slate-950/60 border border-slate-800/90 hover:border-emerald-500/50 rounded-xl p-4 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-950/20 hover:-translate-y-1 flex flex-col justify-between overflow-hidden">
-          <!-- Arte de Tapa con Vinilo Deslizante -->
-          <div class="relative w-full aspect-square mb-3 rounded-lg overflow-hidden flex items-center justify-center p-3 shadow-md" style="background: ${album.gradient};">
-            <!-- Vinilo que asoma en hover -->
-            <div class="vinyl-grooves absolute right-1.5 w-24 h-24 rounded-full border-4 border-slate-900 flex items-center justify-center shadow-2xl transition-transform duration-500 group-hover:translate-x-3 group-hover:rotate-45 pointer-events-none opacity-80 group-hover:opacity-100">
-              <div class="w-8 h-8 rounded-full border border-slate-700 flex items-center justify-center" style="background: ${album.gradient}">
-                <div class="w-2.5 h-2.5 rounded-full bg-slate-950"></div>
+      container.innerHTML = `
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-950/60 border border-slate-800/80 rounded-xl p-4 transition-all duration-300 hover:border-slate-700 animate-in-fade">
+          <div class="flex items-center gap-4 min-w-0">
+            <!-- Tapa / Vinilo interactivo -->
+            <div class="relative w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden flex items-center justify-center shrink-0 shadow-md group cursor-pointer" onclick="pickRandomRockAlbum()" title="Clic para cambiar álbum" style="background: ${album.gradient};">
+              <div class="vinyl-grooves absolute right-1 w-14 h-14 rounded-full border-2 border-slate-900 flex items-center justify-center shadow-lg transition-transform duration-500 group-hover:translate-x-2.5 group-hover:rotate-45 pointer-events-none opacity-90">
+                <div class="w-4 h-4 rounded-full border border-slate-700 flex items-center justify-center" style="background: ${album.gradient}">
+                  <div class="w-1.5 h-1.5 rounded-full bg-slate-950"></div>
+                </div>
+              </div>
+              <div class="relative z-10 text-center px-1 py-1 max-w-[85%] bg-slate-950/80 backdrop-blur-sm rounded border border-white/10 shadow">
+                <i data-lucide="disc" class="w-5 h-5 text-white/90 mx-auto"></i>
               </div>
             </div>
-            <!-- Placa central con información -->
-            <div class="relative z-10 text-center px-2 py-2 max-w-[85%] bg-slate-950/80 backdrop-blur-md rounded-lg border border-white/10 shadow-lg">
-              <span class="text-[9px] uppercase font-bold tracking-wider text-emerald-400 block truncate">${album.genre}</span>
-              <h4 class="text-sm font-bold text-white leading-tight line-clamp-2 mt-0.5">${album.album}</h4>
-              <p class="text-xs text-slate-300 truncate mt-0.5 font-medium">${album.artist}</p>
-            </div>
-            <!-- Chip de Año -->
-            <div class="absolute top-2 left-2 z-10 px-2 py-0.5 rounded text-[10px] font-bold bg-black/60 text-slate-200 backdrop-blur-sm border border-white/10">
-              ${album.year}
-            </div>
-          </div>
 
-          <!-- Metadata -->
-          <div class="flex-1 mb-3">
-            <div class="flex items-baseline justify-between gap-1 mb-0.5">
-              <h3 class="font-bold text-slate-100 text-sm group-hover:text-emerald-300 transition-colors line-clamp-1" title="${album.album}">${album.album}</h3>
-              <span class="text-[10px] font-semibold text-slate-400 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800 shrink-0">${album.decade}</span>
-            </div>
-            <p class="text-xs text-slate-400 font-medium truncate mb-2">${album.artist}</p>
-            <div class="flex items-center gap-1.5 text-[11px] text-slate-400 bg-slate-900/90 px-2.5 py-1.5 rounded-md border border-slate-800">
-              <i data-lucide="music" class="w-3 h-3 text-emerald-400 shrink-0"></i>
-              <span class="truncate"><strong class="text-slate-300 font-normal">Clave:</strong> "${album.track}"</span>
-            </div>
-          </div>
-
-          <!-- Botón de Spotify -->
-          <a href="${album.spotifyUrl}" target="_blank" rel="noopener noreferrer" class="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-semibold bg-[#1DB954]/15 hover:bg-[#1DB954] text-[#1DB954] hover:text-black border border-[#1DB954]/30 hover:border-[#1DB954] transition-all duration-200 shadow-sm group/btn cursor-pointer">
-            <svg class="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 24 24">
-              <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.516 17.306c-.22.357-.685.47-1.04.25-2.85-1.742-6.438-2.136-10.665-1.17-.406.094-.813-.16-.906-.564-.093-.406.16-.813.564-.906 4.63-1.056 8.59-.614 11.797 1.35.356.22.47.684.25 1.04zm1.472-3.272c-.276.446-.86.588-1.306.312-3.262-2.005-8.236-2.587-12.094-1.414-.503.153-1.034-.135-1.187-.638-.153-.503.135-1.034.638-1.187 4.41-1.338 9.9-0.69 13.637 1.62.446.276.588.86.312 1.307zm.127-3.414C15.22 8.3 8.79 8.086 5.12 9.2c-.6.182-1.23-.16-1.412-.76-.182-.6.16-1.23.76-1.412 4.237-1.286 11.34-1.036 15.82 1.626.54.32.716 1.02.395 1.56-.32.54-1.02.716-1.56.395z"/>
-            </svg>
-            <span>Escuchar en Spotify</span>
-            <i data-lucide="external-link" class="w-3 h-3 opacity-60 group-hover/btn:opacity-100 transition-opacity"></i>
-          </a>
-        </div>
-      `).join('');
-
-      lucide.createIcons();
-    };
-
-    const handleRockSearch = (query) => {
-      rockSearchQuery = query.trim();
-      const clearBtn = document.getElementById('rock-search-clear');
-      if (clearBtn) {
-        if (rockSearchQuery) {
-          clearBtn.classList.remove('hidden');
-        } else {
-          clearBtn.classList.add('hidden');
-        }
-      }
-      renderRockNacionalSection();
-    };
-
-    const clearRockSearch = () => {
-      const input = document.getElementById('rock-search-input');
-      if (input) input.value = '';
-      rockSearchQuery = '';
-      const clearBtn = document.getElementById('rock-search-clear');
-      if (clearBtn) clearBtn.classList.add('hidden');
-      renderRockNacionalSection();
-    };
-
-    const setRockDecadeFilter = (decade) => {
-      rockActiveDecade = decade;
-      document.querySelectorAll('.rock-filter-btn').forEach(btn => {
-        if (btn.getAttribute('data-decade') === decade) {
-          btn.classList.add('active');
-        } else {
-          btn.classList.remove('active');
-        }
-      });
-      renderRockNacionalSection();
-    };
-
-    const pickRandomRockAlbum = () => {
-      const randomIndex = Math.floor(Math.random() * ROCK_NACIONAL_ALBUMS.length);
-      const picked = ROCK_NACIONAL_ALBUMS[randomIndex];
-
-      const banner = document.getElementById('rock-spotlight-banner');
-      if (!banner) return;
-
-      banner.classList.remove('hidden');
-      banner.innerHTML = `
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-lg flex items-center justify-center shrink-0 shadow-md" style="background: ${picked.gradient};">
-              <i data-lucide="disc" class="w-6 h-6 text-white animate-spin-slow"></i>
-            </div>
-            <div>
-              <div class="flex items-center gap-2">
-                <span class="text-[10px] uppercase font-bold tracking-wider text-emerald-400">Recomendación Aleatoria para hoy</span>
-                <span class="text-xs text-slate-400">• ${picked.year}</span>
+            <!-- Metadata del disco -->
+            <div class="min-w-0">
+              <div class="flex flex-wrap items-center gap-1.5 mb-1">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-950/50 border border-emerald-500/20 px-2 py-0.5 rounded">${album.genre}</span>
+                <span class="text-xs text-slate-500">•</span>
+                <span class="text-xs font-semibold text-slate-400">${album.year}</span>
               </div>
-              <h3 class="text-base font-bold text-slate-100">${picked.album} — <span class="text-slate-300 font-medium">${picked.artist}</span></h3>
-              <p class="text-xs text-slate-400">Canción recomendada: <strong class="text-slate-200">"${picked.track}"</strong> (${picked.genre})</p>
+              <h4 class="text-base sm:text-lg font-bold text-slate-100 leading-tight truncate">
+                ${album.album} <span class="text-slate-400 font-normal text-sm sm:text-base">— ${album.artist}</span>
+              </h4>
+              <p class="text-xs text-slate-400 mt-1 flex items-center gap-1.5 truncate">
+                <i data-lucide="music" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span>Canción clave: <strong class="text-slate-200">"${album.track}"</strong></span>
+              </p>
             </div>
           </div>
+
+          <!-- Botones de Acción: Spotify y Cambiar -->
           <div class="flex items-center gap-2 shrink-0">
-            <a href="${picked.spotifyUrl}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold bg-[#1DB954] hover:bg-[#1ed760] text-black transition-all shadow-md cursor-pointer">
-              <svg class="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 24 24">
+            <a href="${album.spotifyUrl}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold bg-[#1DB954] hover:bg-[#1ed760] text-black transition-all shadow-md shadow-emerald-950/30 hover:scale-105 active:scale-95 cursor-pointer">
+              <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24">
                 <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.516 17.306c-.22.357-.685.47-1.04.25-2.85-1.742-6.438-2.136-10.665-1.17-.406.094-.813-.16-.906-.564-.093-.406.16-.813.564-.906 4.63-1.056 8.59-.614 11.797 1.35.356.22.47.684.25 1.04zm1.472-3.272c-.276.446-.86.588-1.306.312-3.262-2.005-8.236-2.587-12.094-1.414-.503.153-1.034-.135-1.187-.638-.153-.503.135-1.034.638-1.187 4.41-1.338 9.9-0.69 13.637 1.62.446.276.588.86.312 1.307zm.127-3.414C15.22 8.3 8.79 8.086 5.12 9.2c-.6.182-1.23-.16-1.412-.76-.182-.6.16-1.23.76-1.412 4.237-1.286 11.34-1.036 15.82 1.626.54.32.716 1.02.395 1.56-.32.54-1.02.716-1.56.395z"/>
               </svg>
               <span>Escuchar en Spotify</span>
+              <i data-lucide="external-link" class="w-3.5 h-3.5 opacity-70"></i>
             </a>
-            <button onclick="pickRandomRockAlbum()" class="p-2 rounded-lg text-slate-400 hover:text-slate-200 bg-slate-800/80 hover:bg-slate-700 transition-colors cursor-pointer" title="Otro álbum al azar">
-              <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-            </button>
-            <button onclick="document.getElementById('rock-spotlight-banner').classList.add('hidden')" class="p-2 rounded-lg text-slate-500 hover:text-slate-300 cursor-pointer" title="Cerrar recomendación">
-              <i data-lucide="x" class="w-4 h-4"></i>
+            <button onclick="pickRandomRockAlbum()" class="p-2.5 rounded-lg text-slate-400 hover:text-slate-200 bg-slate-800/80 hover:bg-slate-700 transition-colors border border-slate-700 cursor-pointer" title="Elegir otro álbum al azar">
+              <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
             </button>
           </div>
         </div>
       `;
 
       lucide.createIcons();
-      banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     };
+
+    const pickRandomRockAlbum = () => {
+      let newIndex;
+      do {
+        newIndex = Math.floor(Math.random() * ROCK_NACIONAL_ALBUMS.length);
+      } while (ROCK_NACIONAL_ALBUMS.length > 1 && currentRockAlbum && ROCK_NACIONAL_ALBUMS[newIndex].id === currentRockAlbum.id);
+
+      currentRockAlbum = ROCK_NACIONAL_ALBUMS[newIndex];
+      renderRockNacionalSection();
+    };
+
 
     const setDemosSubView = (subview) => {
       currentDemosView = subview;
