@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Estadística 3</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
   
   <script src="https://cdn.tailwindcss.com"></script>
   
@@ -715,10 +716,8 @@
     ];
 
     const BIBLE_VERSES = [
-      // --- BIBLIA (38 Citas) ---
+      // --- PASAJES BÍBLICOS (20 Citas) ---
       { text: "Todo lo puedo en Cristo que me fortalece.", ref: "Filipenses 4:13" },
-      { text: "Esfuérzate y sé valiente; no temas ni desmayes, porque Jehová tu Dios estará contigo en dondequiera que vayas.", ref: "Josué 1:9" },
-      { text: "Pero los que esperan a Jehová tendrán nuevas fuerzas; levantarán alas como las águilas; correrán, y no se cansarán; caminarán, y no se fatigarán.", ref: "Isaías 40:31" },
       { text: "No nos cansemos, pues, de hacer bien; porque a su tiempo segaremos, si no desmayamos.", ref: "Gálatas 6:9" },
       { text: "Y todo lo que hagáis, hacedlo de corazón, como para el Señor y no para los hombres.", ref: "Colosenses 3:23" },
       { text: "Encomienda a Jehová tus obras, Y tus pensamientos serán afirmados.", ref: "Proverbios 16:3" },
@@ -726,43 +725,25 @@
       { text: "Corramos con paciencia la carrera que tenemos por delante.", ref: "Hebreos 12:1" },
       { text: "Velad, estad firmes en la fe; portaos varonilmente, y esforzaos.", ref: "1 Corintios 16:13" },
       { text: "Bienaventurado el varón que soporta la tentación; porque cuando haya resistido la prueba, recibirá la corona de vida.", ref: "Santiago 1:12" },
-      { text: "¿Qué, pues, diremos a esto? Si Dios es por nosotros, ¿quién contra nosotros?", ref: "Romanos 8:31" },
+      { text: "Si Dios es por nosotros, ¿quién contra nosotros?", ref: "Romanos 8:31" },
       { text: "No temas, porque yo estoy contigo; no desmayes, porque yo soy tu Dios que te esfuerzo; siempre te ayudaré.", ref: "Isaías 41:10" },
       { text: "Que estamos atribulados en todo, mas no angustiados; en apuros, mas no desesperados; perseguidos, mas no desamparados; derribados, pero no destruidos.", ref: "2 Corintios 4:8-9" },
-      { text: "Porque yo sé los pensamientos que tengo acerca de vosotros, dice Jehová, pensamientos de paz, y no de mal, para daros el fin que esperáis.", ref: "Jeremías 29:11" },
-      { text: "Fíate de Jehová de todo tu corazón, y no te apoyes en tu propia prudencia.", ref: "Proverbios 3:5" },
       { text: "El que adquiere cordura a sí mismo se ama; El que retiene la inteligencia hallará el bien.", ref: "Proverbios 19:8" },
       { text: "Clama a mí, y yo te responderé, y te enseñaré cosas grandes y ocultas que tú no conoces.", ref: "Jeremías 33:3" },
       { text: "Por nada estéis afanosos, sino sean conocidas vuestras peticiones delante de Dios en toda oración y ruego, con acción de gracias.", ref: "Filipenses 4:6" },
-      { text: "El principio de la sabiduría es el temor de Jehová; Los insensatos desprecian la sabiduría y la enseñanza.", ref: "Proverbios 1:7" },
       { text: "Porque Jehová da la sabiduría, Y de su boca viene el conocimiento y la inteligencia.", ref: "Proverbios 2:6" },
       { text: "Y si alguno de vosotros tiene falta de sabiduría, pídala a Dios, el cual da a todos abundantemente y sin reproche, y le será dada.", ref: "Santiago 1:5" },
       { text: "La paz os dejo, mi paz os doy; yo no os la doy como el mundo la da. No se turbe vuestro corazón, ni tenga miedo.", ref: "Juan 14:27" },
-      { text: "Echando toda vuestra ansiedad sobre él, porque él tiene cuidado de vosotros.", ref: "1 Pedro 5:7" },
-      { text: "Dios es nuestro amparo y fortaleza, Nuestro pronto auxilio en las tribulaciones.", ref: "Salmos 46:1" },
-      { text: "Alzaré mis ojos a los montes; ¿De dónde vendrá mi socorro? Mi socorro viene de Jehová, Que hizo los cielos y la tierra.", ref: "Salmos 121:1-2" },
-      { text: "Dad gracias en todo, porque esta es la voluntad de Dios para con vosotros en Cristo Jesús.", ref: "1 Tesalonicenses 5:18" },
-      { text: "Este es el día que hizo Jehová; Nos gozaremos y alegraremos en él.", ref: "Salmos 118:24" },
-      { text: "Y la paz de Dios gobierne en vuestros corazones, a la que asimismo fuisteis llamados en un solo cuerpo; y sed agradecidos.", ref: "Colosenses 3:15" },
-      { text: "Bendice, alma mía, a Jehová, Y bendiga todo mi ser su santo nombre.", ref: "Salmos 103:1" },
-      { text: "Y sabemos que a los que aman a Dios, todas las cosas les ayudan a bien.", ref: "Romanos 8:28" },
-      { text: "Encomienda a Jehová tu camino, Y confía en él; y él hará.", ref: "Salmos 37:5" },
       { text: "Porque no nos ha dado Dios espíritu de cobardía, sino de poder, de amor y de dominio propio.", ref: "2 Timoteo 1:7" },
       { text: "Aunque ande en valle de sombra de muerte, No temeré mal alguno, porque tú estarás conmigo.", ref: "Salmos 23:4" },
-      { text: "Venid a mí todos los que estáis trabajados y cargados, y yo os haré descansar.", ref: "Mateo 11:28" },
-      { text: "En todo tiempo ama el amigo, Y es como un hermano en tiempo de angustia.", ref: "Proverbios 17:17" },
-      { text: "Mejores son dos que uno; porque tienen mejor paga de su trabajo. Porque si cayeren, el uno levantará a su compañero.", ref: "Eclesiastés 4:9-10" },
       { text: "Hierro con hierro se aguza; Y así el hombre aguza el rostro de su amigo.", ref: "Proverbios 27:17" },
-      { text: "Nadie tiene mayor amor que este, que uno ponga su vida por sus amigos.", ref: "Juan 15:13" },
 
-      // --- ROCK NACIONAL CLÁSICO (25 Citas) ---
+      // --- ROCK NACIONAL CLÁSICO (19 Citas) ---
       { text: "Tarda en llegar y al final, al final hay recompensa.", ref: "Gustavo Cerati (Zona de Promesas)" },
       { text: "Nada es tan difícil, como parece.", ref: "Luis Alberto Spinetta (Cementerio Club)" },
-      { text: "Siempre es hoy, ya es parte de mi ser.", ref: "Gustavo Cerati (Cosas imposibles)" },
       { text: "El tiempo es veloz, la vida es un soplo.", ref: "David Lebón (El tiempo es veloz)" },
       { text: "Y si te asusta la muerte, es porque amas la vida.", ref: "Charly García (Yendo de la cama al living)" },
       { text: "Poder decir adiós es crecer.", ref: "Gustavo Cerati (Adiós)" },
-      { text: "Yo no quiero vivir paranoico, yo no quiero ver chicos con odio.", ref: "Charly García (Los dinosaurios)" },
       { text: "Las almas repudian todo encierro.", ref: "Luis Alberto Spinetta (Cantata de puentes amarillos)" },
       { text: "Todo pasa, todo pasa, y esto también pasará.", ref: "Los Piojos (Todo pasa)" },
       { text: "Mejor no hablar de ciertas cosas.", ref: "Sumo (Mejor no hablar de ciertas cosas)" },
@@ -770,7 +751,6 @@
       { text: "Despiértate nena, despiértate, que ya empieza el día.", ref: "Pescado Rabioso (Despiértate nena)" },
       { text: "Hay que salir a pelear todos los días.", ref: "Riff (Pantalla del mundo nuevo)" },
       { text: "Un corazón latiendo fuerte, la sangre que corre a mi mente.", ref: "Los Fabulosos Cadillacs (Matador)" },
-      { text: "No llores por las heridas, que no paran de sangrar.", ref: "Catupecu Machu (Y lo que quiero es que pises sin el suelo)" },
       { text: "La vida es una moneda, quien la rebusca la tiene.", ref: "Fito Páez (La vida es una moneda)" },
       { text: "Siempre fui pobre, pero siempre fui un rey.", ref: "Patricio Rey y sus Redonditos de Ricota (Juguetes perdidos)" },
       { text: "No me verás arrodillado.", ref: "Andrés Calamaro (Sin documentos)" },
@@ -778,21 +758,27 @@
       { text: "Buscando en la basura de la gran ciudad, algo para masticar.", ref: "Viejas Locas (Intoxicado)" },
       { text: "Dale alegría, alegría a mi corazón.", ref: "Fito Páez (Y dale alegría a mi corazón)" },
       { text: "No te rindas nunca, aunque estés cansado.", ref: "Attaque 77 (No me arrepiento de este amor)" },
-      { text: "Y ríete de todos, y de ti también.", ref: "Babasónicos (Irresponsables)" },
-      { text: "Siempre estaré cerca de ti, no importa dónde vayas.", ref: "Rata Blanca (Mujer amante)" },
-      { text: "Desarmar y sangrar, no es el camino para llegar.", ref: "Serú Girán (Desarma y sangra)" },
 
-      // --- TAN BIÓNICA Y CHANO (10 Citas) ---
+      // --- TAN BIÓNICA Y CHANO (2 Citas) ---
       { text: "Tengo que aprender a volar entre tanta gente de pie.", ref: "Tan Biónica (Vidas perfectas)" },
-      { text: "Con vos es 4 de noviembre cada media hora.", ref: "Tan Biónica (La melodía de Dios)" },
       { text: "Qué noche mágica, ciudad de Buenos Aires.", ref: "Tan Biónica (Ciudad Mágica)" },
-      { text: "Atardeció en mi corazón y la verdad es que el mundo me resulta indiferente.", ref: "Tan Biónica (Obsesionario en La Mayor)" },
-      { text: "Sabés que todo lo que termina duele.", ref: "Tan Biónica (Las cosas que pasan)" },
-      { text: "Qué me importa la alegría, qué me importa qué dirán, si me duelen los domingos y mi vida es un disfraz.", ref: "Chano (Carnavalintro)" },
-      { text: "Claramente, no me querías, no te importaba mi vida.", ref: "Chano (Claramente)" },
-      { text: "Yo me paso la vida entera pensando en maneras de hacerte feliz.", ref: "Chano (Naistumichu)" },
-      { text: "Santo, guardián de la luz de la mañana, que la cuides para siempre.", ref: "Chano (Oración al Sol)" },
-      { text: "Hola mi vida, no te pido más que un par de noches de amor.", ref: "Tan Biónica (Hola mi vida)" }
+
+      // --- CUARTETO (15 Citas) ---
+      { text: "No te rindas ahora que falta poco, lo mejor está por venir.", ref: "Q' Lokura (Polvo de Estrellas)" },
+      { text: "Cueste lo que cueste voy a llegar, no hay sueño grande si hay voluntad.", ref: "Q' Lokura (Me Duele Tu Nombre)" },
+      { text: "Si el camino se pone pesado, es señal de que vas para arriba.", ref: "Q' Lokura (Disfruto)" },
+      { text: "No te rindas nunca, que la vida es una y vale la pena pelear.", ref: "Ulises Bueno (Dale Vieja Dale)" },
+      { text: "Contra viento y marea, voy a salir a ganar.", ref: "Ulises Bueno (Infiel)" },
+      { text: "Soy de los que caen pero se levantan, con más fuerza y ganas de triunfar.", ref: "Ulises Bueno" },
+      { text: "No hay tormenta que apague este fuego que llevo adentro.", ref: "La Barra (Rompe la Cintura)" },
+      { text: "Aprender a caminar aunque el viento pegue de frente.", ref: "La Barra (Se Nos Fue el Amor)" },
+      { text: "Con paciencia y trabajo todo llega en su momento.", ref: "Jean Carlos (Quiéreme)" },
+      { text: "Yo sigo firme en mi camino, aunque me cueste un montón.", ref: "Rodrigo Bueno (Amor Secreto)" },
+      { text: "Para adelante siempre, que atrás ya no hay nada que buscar.", ref: "Rodrigo Bueno (Qué Ironía)" },
+      { text: "El que no sueña en grande no sabe lo que es vivir.", ref: "Rodrigo Bueno (Soy Cordobés)" },
+      { text: "La batalla más dura es la que peleás contra tus propios miedos.", ref: "Carlos \"La Mona\" Jiménez (El Federal)" },
+      { text: "De abajo salí y peleando la voy a ganar.", ref: "Carlos \"La Mona\" Jiménez (Quién se ha tomado todo el vino)" },
+      { text: "Hay que meterle coraje que la recompensa está al final.", ref: "Carlos \"La Mona\" Jiménez (Muchacho de Barrio)" }
     ];
 
     const MARKDOWN_GUIA = `
