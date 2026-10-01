@@ -74,6 +74,7 @@
     }
     input[type="number"] {
       -moz-appearance: textfield;
+      appearance: textfield;
     }
     
     .markdown-content p { margin-bottom: 1rem; }
@@ -268,45 +269,102 @@
 
       <div id="view-pomodoro" class="view-section hidden-section space-y-6 max-w-4xl mx-auto animate-in-slide w-full">
         <header class="text-center mb-8">
-          <h1 class="text-3xl font-bold text-slate-100 mb-2">Temporizador</h1>
-          <p class="text-slate-400">Mantén el enfoque y registra tus horas de estudio.</p>
+          <h1 class="text-3xl font-bold text-slate-100 mb-2">Temporizador Pomodoro</h1>
+          <p class="text-slate-400">Mantén el enfoque con bloques de estudio y descansos personalizados.</p>
         </header>
 
-        <div class="bg-slate-900/80 border border-slate-800/80 rounded-xl p-12 shadow-lg backdrop-blur-sm flex flex-col items-center bg-gradient-to-b from-slate-900/50 to-slate-900/90 relative overflow-hidden">
-          <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-blue-600/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="bg-slate-900/80 border border-slate-800/80 rounded-xl p-8 sm:p-12 shadow-lg backdrop-blur-sm flex flex-col items-center bg-gradient-to-b from-slate-900/50 to-slate-900/90 relative overflow-hidden">
+          <div id="pomodoro-glow" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl pointer-events-none transition-all duration-500"></div>
           
-          <div class="flex gap-2 mb-8 bg-slate-950 p-1.5 rounded-lg border border-slate-800" id="pomodoro-presets">
-            <!-- Presets buttons JS -->
+          <!-- Selector de Modo: Estudio / Descanso -->
+          <div class="flex items-center gap-1.5 mb-6 bg-slate-950 p-1.5 rounded-xl border border-slate-800 shadow-inner z-10">
+            <button id="btn-mode-work" onclick="switchTimerMode('work')" class="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold transition-all bg-blue-600 text-white shadow-md shadow-blue-900/30">
+              <i data-lucide="brain" style="width: 16px; height: 16px;"></i>
+              <span>Estudio</span>
+              <span id="badge-work-duration" class="ml-1 text-xs opacity-90 px-1.5 py-0.5 rounded bg-blue-700/60 font-mono">30m</span>
+            </button>
+            <button id="btn-mode-break" onclick="switchTimerMode('shortBreak')" class="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-slate-200">
+              <i data-lucide="coffee" style="width: 16px; height: 16px;"></i>
+              <span>Descanso</span>
+              <span id="badge-break-duration" class="ml-1 text-xs opacity-90 px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 font-mono">5m</span>
+            </button>
           </div>
 
-          <div class="text-8xl font-light text-slate-100 tracking-tighter tabular-nums mb-12" id="pomodoro-display">
-            25:00
+          <!-- Presets buttons JS -->
+          <div class="flex flex-wrap items-center justify-center gap-2 mb-6 bg-slate-950 p-1.5 rounded-lg border border-slate-800 z-10" id="pomodoro-presets">
           </div>
 
-          <div class="w-full max-w-sm mb-12 space-y-3">
+          <!-- Status badge indicator -->
+          <div id="pomodoro-status-badge" class="mb-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-blue-950/80 text-blue-400 border border-blue-800/60 flex items-center gap-1.5 z-10">
+            <span id="pomodoro-status-dot" class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+            <span id="pomodoro-status-text">Sesión de Estudio</span>
+          </div>
+
+          <!-- Timer Display -->
+          <div class="text-8xl font-light text-slate-100 tracking-tighter tabular-nums mb-8 z-10 select-none transition-colors duration-300" id="pomodoro-display">
+            30:00
+          </div>
+
+          <!-- Selector de Temas (solo visible en modo Estudio) -->
+          <div id="pomodoro-tema-wrapper" class="w-full max-w-sm mb-8 space-y-3 z-10">
             <label class="block text-xs font-medium text-slate-500 mb-2 text-center uppercase tracking-wider">¿Qué vas a estudiar?</label>
             
             <select id="pomodoro-unidad-select" onchange="handleUnidadChange()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-blue-500 text-center appearance-none cursor-pointer">
               <option value="">Seleccionar Unidad / Capítulo...</option>
-              <!-- Options JS -->
             </select>
             
             <select id="pomodoro-tema-select" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-blue-500 text-center appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed" disabled>
               <option value="">Primero selecciona una unidad...</option>
-              <!-- Options JS -->
             </select>
           </div>
 
-          <div class="flex gap-4">
-            <button id="btn-pomodoro-toggle" class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 w-32 !text-lg bg-blue-600 text-white hover:bg-blue-500 shadow-md shadow-blue-900/20">
+          <!-- Mensaje relajante en modo Descanso (oculto en estudio) -->
+          <div id="pomodoro-break-wrapper" class="hidden w-full max-w-sm mb-8 p-4 rounded-xl bg-emerald-950/20 border border-emerald-900/40 text-center text-sm text-emerald-300 z-10">
+            <i data-lucide="coffee" class="w-6 h-6 mx-auto mb-2 text-emerald-400"></i>
+            <p class="font-medium text-emerald-200 mb-1">¡Tiempo de despejarte!</p>
+            <p class="text-xs text-emerald-400/80">Tomá un vaso de agua, estirá las piernas o descansá la vista.</p>
+          </div>
+
+          <!-- Botones de Acción -->
+          <div class="flex gap-4 z-10">
+            <button id="btn-pomodoro-toggle" class="flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg font-semibold transition-all duration-300 w-36 !text-lg bg-blue-600 text-white hover:bg-blue-500 shadow-md shadow-blue-900/20">
               Iniciar
             </button>
-            <button id="btn-pomodoro-reset" class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 text-sm bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700" title="Reiniciar">
+            <button id="btn-pomodoro-reset" class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 text-sm bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700" title="Reiniciar temporizador">
               <i data-lucide="rotate-ccw" style="width: 20px; height: 20px;"></i>
             </button>
-            <button onclick="enterFocusMode()" class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 border border-slate-800 hover:border-blue-500/50" title="Modo Enfoque">
+            <button onclick="enterFocusMode()" class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 border border-slate-800 hover:border-blue-500/50" title="Modo Enfoque">
               <i data-lucide="maximize-2" class="text-blue-400" style="width: 20px; height: 20px;"></i>
             </button>
+            <button onclick="soundManager.testAlarm()" class="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg font-medium transition-all duration-300 text-sm text-slate-400 hover:text-amber-400 hover:bg-slate-800/50 border border-slate-800 hover:border-amber-500/50" title="Probar sonido de alarma">
+              <i data-lucide="bell" class="text-amber-400" style="width: 20px; height: 20px;"></i>
+            </button>
+          </div>
+
+          <!-- Barra de ajustes rápidos: Configurar descanso y Probar alarma -->
+          <div class="flex flex-wrap items-center justify-center gap-4 text-xs text-slate-400 mt-8 pt-6 border-t border-slate-800/80 w-full max-w-md z-10">
+            <div class="flex items-center gap-2">
+              <i data-lucide="coffee" class="w-3.5 h-3.5 text-emerald-400"></i>
+              <span class="text-slate-400">Descanso:</span>
+              <select id="quick-break-select" onchange="handleQuickBreakChange(this.value)" class="bg-slate-950 border border-slate-800 text-slate-200 rounded px-2.5 py-1 text-xs focus:outline-none focus:border-blue-500 cursor-pointer">
+                <option value="5">5 minutos</option>
+                <option value="10">10 minutos</option>
+                <option value="15">15 minutos</option>
+                <option value="20">20 minutos</option>
+                <option value="custom">Personalizado...</option>
+              </select>
+            </div>
+            <div class="h-3.5 w-px bg-slate-800"></div>
+            <button onclick="soundManager.testAlarm()" class="flex items-center gap-1.5 text-slate-400 hover:text-amber-400 transition-colors py-1 px-2 rounded hover:bg-slate-800/50" title="Probar sonido actual">
+              <i data-lucide="volume-2" class="w-3.5 h-3.5 text-amber-400"></i>
+              <span>Probar</span>
+            </button>
+            <div class="h-3.5 w-px bg-slate-800"></div>
+            <label class="flex items-center gap-1.5 text-slate-400 hover:text-blue-400 transition-colors py-1 px-2 rounded hover:bg-slate-800/50 cursor-pointer" title="Cambiar sonido por un archivo .mp3">
+              <i data-lucide="music" class="w-3.5 h-3.5 text-blue-400"></i>
+              <span id="pomodoro-sound-label">Audio .mp3</span>
+              <input type="file" accept="audio/*" class="hidden" onchange="handleAudioUpload(event)" />
+            </label>
           </div>
         </div>
       </div>
@@ -343,8 +401,85 @@
       <div id="view-config" class="view-section hidden-section space-y-6 max-w-2xl animate-in-slide w-full">
         <header class="mb-8">
           <h1 class="text-3xl font-bold text-slate-100 mb-1">Configuración</h1>
-          <p class="text-slate-400">Gestiona tus datos e importaciones.</p>
+          <p class="text-slate-400">Gestiona tus preferencias, temporizador y datos.</p>
         </header>
+
+        <!-- Pomodoro & Alarm Configuration Card -->
+        <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-5 shadow-lg backdrop-blur-sm space-y-5">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+            <h3 class="text-lg font-semibold text-slate-100 flex items-center gap-2">
+              <i data-lucide="timer" class="text-blue-400" style="width: 20px; height: 20px;"></i>
+              Temporizador y Alarma
+            </h3>
+            <button onclick="soundManager.testAlarm()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-medium rounded-lg border border-slate-700 flex items-center gap-1.5 transition-colors">
+              <i data-lucide="volume-2" class="text-amber-400" style="width: 14px; height: 14px;"></i>
+              <span>Probar sonido</span>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Duración de Estudio -->
+            <div class="bg-slate-950/60 p-4 rounded-lg border border-slate-800/80">
+              <label class="block text-sm font-medium text-slate-300 mb-1">Tiempo de Estudio</label>
+              <p class="text-xs text-slate-500 mb-3">Duración de cada bloque de concentración.</p>
+              <div class="flex items-center gap-2">
+                <input type="number" id="config-study-duration" min="1" max="180" onchange="handleConfigDurationChange()" class="w-24 bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500 text-center font-mono">
+                <span class="text-xs text-slate-400">minutos</span>
+              </div>
+            </div>
+
+            <!-- Duración de Descanso -->
+            <div class="bg-slate-950/60 p-4 rounded-lg border border-slate-800/80">
+              <label class="block text-sm font-medium text-slate-300 mb-1">Tiempo de Descanso</label>
+              <p class="text-xs text-slate-500 mb-3">Duración del descanso al terminar de estudiar.</p>
+              <div class="flex items-center gap-2">
+                <input type="number" id="config-break-duration" min="1" max="60" onchange="handleConfigDurationChange()" class="w-24 bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 text-center font-mono">
+                <span class="text-xs text-slate-400">minutos</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Configuración de Sonido (.mp3 o Sintetizado) -->
+          <div class="pt-4 border-t border-slate-800 space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <label class="block text-sm font-medium text-slate-300">Sonido de la Alarma</label>
+                <p class="text-xs text-slate-500">Usa el timbre predeterminado o carga tu propio archivo .mp3.</p>
+              </div>
+              <span id="current-sound-badge" class="text-xs px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700 font-mono truncate max-w-[180px]">
+                Timbre Sintetizado
+              </span>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2.5">
+              <label class="flex items-center gap-2 px-3 py-2 bg-blue-600/10 text-blue-400 hover:bg-blue-600/20 border border-blue-500/30 rounded-lg font-medium text-xs cursor-pointer transition-all">
+                <i data-lucide="music" style="width: 15px; height: 15px;"></i>
+                <span>Cargar archivo .mp3 / audio</span>
+                <input type="file" accept="audio/*" class="hidden" onchange="handleAudioUpload(event)" />
+              </label>
+
+              <button id="btn-reset-sound" onclick="resetDefaultSound()" class="hidden items-center gap-1.5 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-red-400 text-xs rounded-lg border border-slate-700 transition-colors">
+                <i data-lucide="rotate-ccw" style="width: 13px; height: 13px;"></i>
+                <span>Restablecer timbre por defecto</span>
+              </button>
+
+              <button onclick="soundManager.testAlarm()" class="flex items-center gap-1.5 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs rounded-lg border border-slate-700 transition-colors">
+                <i data-lucide="volume-2" class="text-amber-400" style="width: 13px; height: 13px;"></i>
+                <span>Probar sonido</span>
+              </button>
+            </div>
+
+            <div id="custom-sound-info" class="hidden text-xs text-emerald-400 flex items-center gap-1.5 pt-1">
+              <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-400"></i>
+              <span id="custom-sound-name">Audio personalizado cargado con éxito.</span>
+            </div>
+          </div>
+
+          <div class="pt-2 text-xs text-slate-500 flex items-center gap-2">
+            <i data-lucide="info" style="width: 14px; height: 14px;" class="shrink-0 text-slate-400"></i>
+            <span>La alarma sonará automáticamente tanto al terminar una sesión de estudio como al terminar un descanso.</span>
+          </div>
+        </div>
 
         <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-5 shadow-lg backdrop-blur-sm space-y-6">
           <div>
@@ -697,6 +832,43 @@
         </button>
         <button id="btn-focus-reset" class="w-20 h-20 rounded-full flex items-center justify-center bg-slate-900 text-slate-500 border border-slate-800 hover:text-slate-300 hover:bg-slate-800 transition-all">
           <i data-lucide="rotate-ccw" style="width: 28px; height: 28px;"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alarm Notification Modal -->
+  <div id="alarm-modal" class="fixed inset-0 z-[150] bg-slate-950/85 backdrop-blur-md hidden flex-col items-center justify-center animate-in-fade p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 max-w-md w-full shadow-2xl flex flex-col items-center text-center relative overflow-hidden">
+      <!-- Glow effect -->
+      <div id="alarm-modal-glow" class="absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-48 bg-blue-500/20 rounded-full blur-2xl pointer-events-none"></div>
+
+      <!-- Ringing Bell Icon -->
+      <div class="relative mb-6">
+        <div id="alarm-icon-box" class="w-20 h-20 rounded-full bg-blue-500/10 border border-blue-500/30 flex items-center justify-center shadow-lg">
+          <i data-lucide="bell" id="alarm-icon" class="text-blue-400 animate-bounce" style="width: 36px; height: 36px;"></i>
+        </div>
+        <span class="absolute top-0 right-0 flex h-4 w-4">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-4 w-4 bg-amber-500"></span>
+        </span>
+      </div>
+
+      <!-- Title & description -->
+      <h3 id="alarm-modal-title" class="text-2xl font-bold text-slate-100 mb-2">¡Tiempo Completado!</h3>
+      <p id="alarm-modal-desc" class="text-slate-400 text-sm mb-8 leading-relaxed">
+        Has finalizado tu tiempo programado.
+      </p>
+
+      <!-- Action buttons -->
+      <div class="flex flex-col sm:flex-row gap-3 w-full justify-center">
+        <button id="alarm-btn-action" onclick="acceptAlarmAndStartNext()" class="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-semibold transition-all duration-200 bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/30">
+          <i data-lucide="play" style="width: 18px; height: 18px;"></i>
+          <span id="alarm-btn-action-text">Comenzar Siguiente</span>
+        </button>
+        <button onclick="soundManager.stopAlarm()" class="flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-medium transition-all duration-200 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700">
+          <i data-lucide="bell-off" style="width: 18px; height: 18px;"></i>
+          <span>Detener Alarma</span>
         </button>
       </div>
     </div>
@@ -1840,6 +2012,17 @@ Demuestre que:
         saveStateItem('temas');
       }
 
+            // Cargar configuraciones guardadas de pomodoro
+      const savedWork = localStorage.getItem('stats_pomodoro_work');
+      if (savedWork && !isNaN(parseInt(savedWork)) && parseInt(savedWork) > 0) {
+        timerPreset = parseInt(savedWork);
+      }
+      const savedBreak = localStorage.getItem('stats_pomodoro_break');
+      if (savedBreak && !isNaN(parseInt(savedBreak)) && parseInt(savedBreak) > 0) {
+        timerBreakPreset = parseInt(savedBreak);
+      }
+      timerTimeLeft = (timerMode === 'work' ? timerPreset : timerBreakPreset) * 60;
+
       ['sesiones', 'objetivos'].forEach(key => {
         const stored = localStorage.getItem(`stats_${key}`);
         if (stored) {
@@ -2184,17 +2367,245 @@ Demuestre que:
       }, 100);
     };
 
+    // --- Sound & Alarm Management (MP3 Audio + Web Audio API Fallback) ---
+    const soundManager = {
+      audioCtx: null,
+      alarmInterval: null,
+      alarmTimeout: null,
+      titleInterval: null,
+      originalTitle: document.title || 'Web Estadística',
+      isPlaying: false,
+      currentAudio: null,
+      customAudioSrc: localStorage.getItem('stats_pomodoro_audio_data') || null,
+      customAudioName: localStorage.getItem('stats_pomodoro_audio_name') || null,
+
+      initContext() {
+        if (!this.audioCtx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (AudioContextClass) {
+            this.audioCtx = new AudioContextClass();
+          }
+        }
+        if (this.audioCtx && this.audioCtx.state === 'suspended') {
+          this.audioCtx.resume();
+        }
+        return this.audioCtx;
+      },
+
+      playTone(freq, type, delay, duration, gainLevel = 0.28) {
+        try {
+          const ctx = this.initContext();
+          if (!ctx) return;
+          const startTime = ctx.currentTime + delay;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, startTime);
+
+          // Smooth envelope attack and decay to avoid clicks
+          gain.gain.setValueAtTime(0.0001, startTime);
+          gain.gain.linearRampToValueAtTime(gainLevel, startTime + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(startTime);
+          osc.stop(startTime + duration + 0.05);
+
+          setTimeout(() => {
+            try { osc.disconnect(); gain.disconnect(); } catch(e) {}
+          }, (delay + duration + 0.1) * 1000);
+        } catch (err) {
+          console.warn("Audio warning:", err);
+        }
+      },
+
+      playChimeBurst() {
+        // Melodic sequence: E5 (659Hz) -> G#5 (830Hz) -> B5 (987Hz) -> E6 (1318Hz)
+        const notes = [
+          { f: 659.25, t: 0.00, d: 0.22 },
+          { f: 830.61, t: 0.12, d: 0.22 },
+          { f: 987.77, t: 0.24, d: 0.25 },
+          { f: 1318.51, t: 0.38, d: 0.55 },
+          // Second echo chime
+          { f: 987.77, t: 0.65, d: 0.20 },
+          { f: 1318.51, t: 0.78, d: 0.60 }
+        ];
+
+        notes.forEach(n => {
+          this.playTone(n.f, 'triangle', n.t, n.d, 0.28);
+          this.playTone(n.f * 1.002, 'sine', n.t, n.d, 0.18);
+        });
+      },
+
+      testAlarm() {
+        // Stop any currently playing preview
+        if (this.currentAudio) {
+          try {
+            this.currentAudio.pause();
+            this.currentAudio.currentTime = 0;
+          } catch(e) {}
+          this.currentAudio = null;
+        }
+
+        if (this.customAudioSrc) {
+          try {
+            this.currentAudio = new Audio(this.customAudioSrc);
+            const playPromise = this.currentAudio.play();
+            if (playPromise !== undefined) {
+              playPromise.catch(err => {
+                console.warn("No se pudo reproducir el MP3, usando sintetizador:", err);
+                this.initContext();
+                this.playChimeBurst();
+              });
+            }
+          } catch(e) {
+            this.initContext();
+            this.playChimeBurst();
+          }
+        } else {
+          this.initContext();
+          this.playChimeBurst();
+        }
+
+        // Brief visual feedback on the status badge
+        const badge = document.getElementById('pomodoro-status-badge');
+        if (badge) {
+          const prevHtml = badge.innerHTML;
+          const label = this.customAudioName ? this.customAudioName : "Timbre por defecto";
+          badge.innerHTML = `<i data-lucide="volume-2" class="w-3.5 h-3.5 text-amber-400"></i> <span class="text-amber-300">Probando (${label})...</span>`;
+          lucide.createIcons();
+          setTimeout(() => {
+            badge.innerHTML = prevHtml;
+            lucide.createIcons();
+          }, 2200);
+        }
+      },
+
+      startAlarm(config) {
+        this.stopAlarm();
+        this.isPlaying = true;
+
+        if (this.customAudioSrc) {
+          try {
+            this.currentAudio = new Audio(this.customAudioSrc);
+            this.currentAudio.loop = true;
+            const playPromise = this.currentAudio.play();
+            if (playPromise !== undefined) {
+              playPromise.catch(err => {
+                console.warn("Fallo al reproducir audio personalizado, usando timbre sintetizado:", err);
+                this.startSynthesizedLoop();
+              });
+            }
+          } catch(e) {
+            this.startSynthesizedLoop();
+          }
+        } else {
+          this.startSynthesizedLoop();
+        }
+
+        // Auto-stop after 30 seconds if nobody stops it
+        this.alarmTimeout = setTimeout(() => {
+          if (this.isPlaying) {
+            this.stopAlarm();
+          }
+        }, 30000);
+
+        // Show Modal Dialog
+        showAlarmModal(config);
+
+        // Tab Title Flashing
+        let flag = false;
+        this.originalTitle = document.title || 'Web Estadística';
+        this.titleInterval = setInterval(() => {
+          flag = !flag;
+          document.title = flag ? `🔔 ${config.title}` : `⏰ ¡TIEMPO TERMINADO!`;
+        }, 800);
+
+        // Native Desktop Notification if granted
+        try {
+          if ('Notification' in window && Notification.permission === 'granted') {
+            new Notification(config.title, {
+              body: config.desc,
+              icon: 'favicon.svg'
+            });
+          }
+        } catch(e) {}
+      },
+
+      startSynthesizedLoop() {
+        this.initContext();
+        this.playChimeBurst();
+
+        let reps = 0;
+        this.alarmInterval = setInterval(() => {
+          reps++;
+          if (reps >= 15) {
+            this.stopAlarm();
+            return;
+          }
+          this.playChimeBurst();
+        }, 1800);
+      },
+
+      stopAlarm() {
+        this.isPlaying = false;
+        if (this.currentAudio) {
+          try {
+            this.currentAudio.pause();
+            this.currentAudio.currentTime = 0;
+          } catch(e) {}
+          this.currentAudio = null;
+        }
+        if (this.alarmInterval) {
+          clearInterval(this.alarmInterval);
+          this.alarmInterval = null;
+        }
+        if (this.alarmTimeout) {
+          clearTimeout(this.alarmTimeout);
+          this.alarmTimeout = null;
+        }
+        if (this.titleInterval) {
+          clearInterval(this.titleInterval);
+          this.titleInterval = null;
+          document.title = this.originalTitle;
+        }
+        hideAlarmModal();
+      }
+    };
+
+    // Close alarm with Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && soundManager.isPlaying) {
+        soundManager.stopAlarm();
+      }
+    });
+
+    // --- Pomodoro State & Timer Management ---
     let pomodoroInterval = null;
-    let timerTimeLeft = 30 * 60;
+    let timerPreset = parseInt(localStorage.getItem('stats_pomodoro_work')) || 30; // Minutos de estudio
+    let timerBreakPreset = parseInt(localStorage.getItem('stats_pomodoro_break')) || 5; // Minutos de descanso
+    let timerMode = 'work'; // 'work' | 'shortBreak'
+    let timerTimeLeft = timerPreset * 60;
     let timerIsActive = false;
-    let timerMode = 'work';
-    let timerPreset = 30;
+
     let isCustomPreset = false;
     let customPresetValue = '';
+    let isCustomBreakPreset = false;
+    let customBreakValue = '';
 
-    const PRESETS = [
+    const WORK_PRESETS = [
+      { l: '25 min', v: 25 },
       { l: '30 min', v: 30 },
       { l: '50 min', v: 50 }
+    ];
+
+    const BREAK_PRESETS = [
+      { l: '5 min', v: 5 },
+      { l: '10 min', v: 10 },
+      { l: '15 min', v: 15 }
     ];
 
     const formatTime = (seconds) => {
@@ -2205,16 +2616,28 @@ Demuestre que:
 
     const updateTimerDisplay = () => {
       const timeStr = formatTime(timerTimeLeft);
-      document.getElementById('pomodoro-display').innerText = timeStr;
-      document.getElementById('focus-time-display').innerText = timeStr;
+      const mainDisplay = document.getElementById('pomodoro-display');
+      const focusDisplay = document.getElementById('focus-time-display');
+      if (mainDisplay) mainDisplay.innerText = timeStr;
+      if (focusDisplay) focusDisplay.innerText = timeStr;
     };
 
     const renderPomodoroPresets = () => {
       const container = document.getElementById('pomodoro-presets');
-      let html = PRESETS.map(p => `
+      if (!container) return;
+
+      const isWork = timerMode === 'work';
+      const presets = isWork ? WORK_PRESETS : BREAK_PRESETS;
+      const currentDuration = isWork ? timerPreset : timerBreakPreset;
+      const isCustom = isWork ? isCustomPreset : isCustomBreakPreset;
+      const customVal = isWork ? customPresetValue : customBreakValue;
+
+      const activeColor = isWork ? 'bg-blue-600 text-white shadow' : 'bg-emerald-600 text-white shadow';
+
+      let html = presets.map(p => `
         <button 
           onclick="setTimerPreset(${p.v}, false)"
-          class="px-4 py-1.5 rounded-md text-sm font-medium transition-all ${timerPreset === p.v && !isCustomPreset && timerMode === 'work' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'}"
+          class="px-4 py-1.5 rounded-md text-sm font-medium transition-all ${currentDuration === p.v && !isCustom ? `${activeColor} font-semibold` : 'text-slate-400 hover:text-slate-200'}"
         >
           ${p.l}
         </button>
@@ -2223,11 +2646,11 @@ Demuestre que:
       html += `
         <div class="flex items-center ml-1 border-l border-slate-800 pl-2">
           <input type="number" id="custom-preset-input" min="1" max="300" placeholder="Min" 
-                 value="${customPresetValue}"
-                 oninput="customPresetValue = this.value"
+                 value="${customVal}"
+                 oninput="handleCustomPresetInput(this.value)"
                  onkeyup="if(event.key === 'Enter') applyCustomPreset()"
-                 class="w-16 bg-slate-900 border border-slate-700 rounded-l-md px-2 text-center text-sm py-1.5 text-slate-200 focus:outline-none focus:border-blue-500 transition-colors">
-          <button onclick="applyCustomPreset()" class="px-3 py-1.5 rounded-r-md text-sm font-medium transition-all ${isCustomPreset && timerMode === 'work' ? 'bg-blue-600 text-white shadow border border-blue-600' : 'bg-slate-800 text-slate-400 hover:text-slate-200 border-y border-r border-slate-700'}">
+                 class="w-16 bg-slate-900 border border-slate-700 rounded-l-md px-2 text-center text-sm py-1.5 text-slate-200 focus:outline-none focus:border-${isWork ? 'blue' : 'emerald'}-500 transition-colors">
+          <button onclick="applyCustomPreset()" class="px-3 py-1.5 rounded-r-md text-sm font-medium transition-all ${isCustom ? `${activeColor} border ${isWork ? 'border-blue-600' : 'border-emerald-600'}` : 'bg-slate-800 text-slate-400 hover:text-slate-200 border-y border-r border-slate-700'}">
             Personalizado
           </button>
         </div>
@@ -2235,47 +2658,177 @@ Demuestre que:
       container.innerHTML = html;
     };
 
+    const handleCustomPresetInput = (val) => {
+      if (timerMode === 'work') {
+        customPresetValue = val;
+      } else {
+        customBreakValue = val;
+      }
+    };
+
     const applyCustomPreset = () => {
-      const val = parseInt(document.getElementById('custom-preset-input').value);
-      if (val > 0) {
+      const input = document.getElementById('custom-preset-input');
+      if (!input) return;
+      const val = parseInt(input.value);
+      if (!isNaN(val) && val > 0) {
+        if (timerMode === 'work') {
+          customPresetValue = val;
+        } else {
+          customBreakValue = val;
+        }
         setTimerPreset(val, true);
       }
     };
 
     const setTimerPreset = (mins, isCustom = false) => {
-      timerPreset = mins;
-      isCustomPreset = isCustom;
+      if (timerMode === 'work') {
+        timerPreset = mins;
+        isCustomPreset = isCustom;
+        localStorage.setItem('stats_pomodoro_work', mins);
+      } else {
+        timerBreakPreset = mins;
+        isCustomBreakPreset = isCustom;
+        localStorage.setItem('stats_pomodoro_break', mins);
+        syncQuickBreakSelect();
+      }
+
       timerTimeLeft = mins * 60;
-      timerMode = 'work';
-      if (timerIsActive) toggleTimer(); // pause if running
+      if (timerIsActive) toggleTimer(); // pausar si estaba corriendo
+
       renderPomodoroPresets();
       updateTimerDisplay();
       updateFocusLabels();
+      updateModeBadges();
+      
+      // Sincronizar inputs de Configuración si están abiertos
+      const configStudy = document.getElementById('config-study-duration');
+      const configBreak = document.getElementById('config-break-duration');
+      if (configStudy) configStudy.value = timerPreset;
+      if (configBreak) configBreak.value = timerBreakPreset;
+    };
+
+    const setBreakDuration = (mins, isCustom = false) => {
+      timerBreakPreset = mins;
+      isCustomBreakPreset = isCustom;
+      localStorage.setItem('stats_pomodoro_break', mins);
+
+      if (timerMode === 'shortBreak' && !timerIsActive) {
+        timerTimeLeft = mins * 60;
+        updateTimerDisplay();
+      }
+
+      renderPomodoroPresets();
+      updateModeBadges();
+      syncQuickBreakSelect();
+
+      const configBreak = document.getElementById('config-break-duration');
+      if (configBreak) configBreak.value = mins;
+    };
+
+    const switchTimerMode = (mode) => {
+      if (timerMode === mode) return;
+      if (timerIsActive) {
+        clearInterval(pomodoroInterval);
+        timerIsActive = false;
+      }
+      timerMode = mode;
+      timerTimeLeft = (timerMode === 'work' ? timerPreset : timerBreakPreset) * 60;
+
+      renderPomodoroPresets();
+      updateTimerDisplay();
+      updateFocusLabels();
+      updatePomodoroTheme();
+      updateModeBadges();
+    };
+
+    const handleQuickBreakChange = (val) => {
+      if (val === 'custom') {
+        switchTimerMode('shortBreak');
+        const customInput = document.getElementById('custom-preset-input');
+        if (customInput) customInput.focus();
+        return;
+      }
+      const mins = parseInt(val);
+      if (!isNaN(mins) && mins > 0) {
+        setBreakDuration(mins, false);
+      }
+    };
+
+    const syncQuickBreakSelect = () => {
+      const select = document.getElementById('quick-break-select');
+      if (!select) return;
+      const std = ['5', '10', '15', '20'];
+      if (std.includes(String(timerBreakPreset))) {
+        select.value = String(timerBreakPreset);
+      } else {
+        select.value = 'custom';
+      }
+    };
+
+    const updateModeBadges = () => {
+      const workBadge = document.getElementById('badge-work-duration');
+      const breakBadge = document.getElementById('badge-break-duration');
+      if (workBadge) workBadge.innerText = `${timerPreset}m`;
+      if (breakBadge) breakBadge.innerText = `${timerBreakPreset}m`;
+    };
+
+    const updatePomodoroTheme = () => {
+      const isWork = timerMode === 'work';
+      const btnWork = document.getElementById('btn-mode-work');
+      const btnBreak = document.getElementById('btn-mode-break');
+      const statusBadge = document.getElementById('pomodoro-status-badge');
+      const statusText = document.getElementById('pomodoro-status-text');
+      const statusDot = document.getElementById('pomodoro-status-dot');
+      const glow = document.getElementById('pomodoro-glow');
+      const display = document.getElementById('pomodoro-display');
+      const temaWrapper = document.getElementById('pomodoro-tema-wrapper');
+      const breakWrapper = document.getElementById('pomodoro-break-wrapper');
+
+      if (isWork) {
+        if (btnWork) btnWork.className = "flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold transition-all bg-blue-600 text-white shadow-md shadow-blue-900/30";
+        if (btnBreak) btnBreak.className = "flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-slate-200";
+        if (statusBadge) statusBadge.className = "mb-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-blue-950/80 text-blue-400 border border-blue-800/60 flex items-center gap-1.5 z-10";
+        if (statusText) statusText.innerText = "Sesión de Estudio";
+        if (statusDot) statusDot.className = "w-2 h-2 rounded-full bg-blue-400 animate-pulse";
+        if (glow) glow.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl pointer-events-none transition-all duration-500";
+        if (display) display.className = "text-8xl font-light text-slate-100 tracking-tighter tabular-nums mb-8 z-10 select-none transition-colors duration-300";
+        if (temaWrapper) temaWrapper.classList.remove('hidden');
+        if (breakWrapper) breakWrapper.classList.add('hidden');
+      } else {
+        if (btnWork) btnWork.className = "flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-slate-200";
+        if (btnBreak) btnBreak.className = "flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold transition-all bg-emerald-600 text-white shadow-md shadow-emerald-900/30";
+        if (statusBadge) statusBadge.className = "mb-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-emerald-950/80 text-emerald-400 border border-emerald-800/60 flex items-center gap-1.5 z-10";
+        if (statusText) statusText.innerText = "Tiempo de Descanso";
+        if (statusDot) statusDot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+        if (glow) glow.className = "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none transition-all duration-500";
+        if (display) display.className = "text-8xl font-light text-emerald-200 tracking-tighter tabular-nums mb-8 z-10 select-none transition-colors duration-300";
+        if (temaWrapper) temaWrapper.classList.add('hidden');
+        if (breakWrapper) breakWrapper.classList.remove('hidden');
+      }
+
+      updateTimerButtons();
+      lucide.createIcons();
     };
 
     const updatePomodoroSelect = () => {
       const selectUnidad = document.getElementById('pomodoro-unidad-select');
       const selectTema = document.getElementById('pomodoro-tema-select');
+      if (!selectUnidad || !selectTema) return;
       
-      // Obtener unidades únicas
       const unidades = [...new Set(state.temas.map(t => t.unidad).filter(Boolean))];
-      
-      // Guardar el valor actual si lo hay
       const currentUnidad = selectUnidad.value;
       
-      // Poblar selector de unidades
       selectUnidad.innerHTML = `<option value="">Seleccionar Unidad / Capítulo...</option>` + 
         unidades.map(u => `<option value="${u}">${u}</option>`).join('');
       
       selectUnidad.value = currentUnidad;
-      
-      // Forzar actualización del segundo selector basado en el primero
       handleUnidadChange();
     };
     
     const handleUnidadChange = () => {
        const selectUnidad = document.getElementById('pomodoro-unidad-select');
        const selectTema = document.getElementById('pomodoro-tema-select');
+       if (!selectUnidad || !selectTema) return;
        const unidadSeleccionada = selectUnidad.value;
        
        if (!unidadSeleccionada) {
@@ -2286,7 +2839,6 @@ Demuestre que:
        }
        
        const temasDeUnidad = state.temas.filter(t => t.unidad === unidadSeleccionada);
-       
        selectTema.innerHTML = `<option value="">Seleccionar tema...</option>` + 
           temasDeUnidad.map(t => `<option value="${t.id}">${t.tema}</option>`).join('');
        
@@ -2294,6 +2846,16 @@ Demuestre que:
     };
 
     const toggleTimer = () => {
+      // Inicializar y desbloquear AudioContext en la primera interacción
+      soundManager.initContext();
+
+      // Solicitar permiso de notificaciones de forma transparente si aún no se pidió
+      try {
+        if ('Notification' in window && Notification.permission === 'default') {
+          Notification.requestPermission();
+        }
+      } catch(e) {}
+
       timerIsActive = !timerIsActive;
       updateTimerButtons();
       
@@ -2317,8 +2879,9 @@ Demuestre que:
       updateTimerButtons();
       
       if (timerMode === 'work') {
-        // Save session
-        const selectedTema = document.getElementById('pomodoro-tema-select').value;
+        // Guardar sesión de estudio
+        const selectTema = document.getElementById('pomodoro-tema-select');
+        const selectedTema = selectTema ? selectTema.value : '';
         const session = {
           id: generateId(),
           fecha: new Date().toISOString(),
@@ -2329,26 +2892,45 @@ Demuestre que:
         state.sesiones.push(session);
         saveStateItem('sesiones');
         
+        // Sonar alarma con aviso de descanso
+        soundManager.startAlarm({
+          title: '¡Sesión de Estudio Completada! 🎉',
+          desc: `Completaste tus ${timerPreset} minutos de estudio. Es hora de despejar la mente con un descanso de ${timerBreakPreset} minutos.`,
+          actionText: `☕ Iniciar Descanso (${timerBreakPreset} min)`,
+          mode: 'break'
+        });
+
+        // Pasar automáticamente al modo descanso
         timerMode = 'shortBreak';
-        timerTimeLeft = 5 * 60;
+        timerTimeLeft = timerBreakPreset * 60;
         
-        // Customizing an alert conceptually for vanilla html without actual alert()
-        console.log("Sesión de estudio completada!");
       } else {
+        // Descanso completado
+        soundManager.startAlarm({
+          title: '¡Descanso Finalizado! ⚡',
+          desc: `Tu descanso de ${timerBreakPreset} minutos ha concluido. ¿Listo para comenzar una nueva sesión de estudio de ${timerPreset} minutos?`,
+          actionText: `🧠 Iniciar Estudio (${timerPreset} min)`,
+          mode: 'work'
+        });
+
+        // Pasar automáticamente al modo estudio
         timerMode = 'work';
         timerTimeLeft = timerPreset * 60;
       }
       
-      renderPomodoroPresets(); // reset active preset visual if break
+      renderPomodoroPresets();
       updateTimerDisplay();
       updateFocusLabels();
+      updatePomodoroTheme();
+      updateModeBadges();
+      syncQuickBreakSelect();
     };
 
     const resetTimer = () => {
       clearInterval(pomodoroInterval);
       timerIsActive = false;
-      timerTimeLeft = timerPreset * 60;
-      timerMode = 'work';
+      const duration = timerMode === 'work' ? timerPreset : timerBreakPreset;
+      timerTimeLeft = duration * 60;
       updateTimerButtons();
       updateTimerDisplay();
       renderPomodoroPresets();
@@ -2357,35 +2939,103 @@ Demuestre que:
 
     const updateTimerButtons = () => {
       const btnMain = document.getElementById('btn-pomodoro-toggle');
+      if (!btnMain) return;
+
       if (timerIsActive) {
-        btnMain.className = "flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 w-32 !text-lg bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700";
+        btnMain.className = "flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg font-semibold transition-all duration-300 w-36 !text-lg bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700";
         btnMain.innerText = 'Pausar';
         
         // Focus mode buttons
-        document.getElementById('btn-focus-toggle').classList.replace('bg-blue-600', 'bg-slate-800');
-        document.getElementById('btn-focus-toggle').classList.replace('text-white', 'text-slate-300');
-        document.getElementById('btn-focus-toggle').classList.replace('hover:bg-blue-500', 'hover:bg-slate-700');
-        document.getElementById('focus-icon-play').style.display = 'none';
-        document.getElementById('focus-icon-pause').style.display = 'block';
+        const focusToggle = document.getElementById('btn-focus-toggle');
+        if (focusToggle) {
+          focusToggle.className = "w-20 h-20 rounded-full flex items-center justify-center transition-all bg-slate-800 text-slate-300 hover:bg-slate-700 shadow-lg";
+        }
+        const playIcon = document.getElementById('focus-icon-play');
+        const pauseIcon = document.getElementById('focus-icon-pause');
+        if (playIcon) playIcon.style.display = 'none';
+        if (pauseIcon) pauseIcon.style.display = 'block';
 
       } else {
-        btnMain.className = "flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 w-32 !text-lg bg-blue-600 text-white hover:bg-blue-500 shadow-md shadow-blue-900/20";
+        const isWork = timerMode === 'work';
+        const colorClass = isWork 
+          ? "bg-blue-600 hover:bg-blue-500 shadow-blue-900/20" 
+          : "bg-emerald-600 hover:bg-emerald-500 shadow-emerald-900/20";
+        
+        btnMain.className = `flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg font-semibold transition-all duration-300 w-36 !text-lg ${colorClass} text-white shadow-md`;
         btnMain.innerText = 'Iniciar';
         
         // Focus mode buttons
-        document.getElementById('btn-focus-toggle').classList.replace('bg-slate-800', 'bg-blue-600');
-        document.getElementById('btn-focus-toggle').classList.replace('text-slate-300', 'text-white');
-        document.getElementById('btn-focus-toggle').classList.replace('hover:bg-slate-700', 'hover:bg-blue-500');
-        document.getElementById('focus-icon-play').style.display = 'block';
-        document.getElementById('focus-icon-pause').style.display = 'none';
+        const focusToggle = document.getElementById('btn-focus-toggle');
+        if (focusToggle) {
+          const focusColor = isWork ? 'bg-blue-600 hover:bg-blue-500' : 'bg-emerald-600 hover:bg-emerald-500';
+          focusToggle.className = `w-20 h-20 rounded-full flex items-center justify-center transition-all ${focusColor} text-white shadow-lg`;
+        }
+        const playIcon = document.getElementById('focus-icon-play');
+        const pauseIcon = document.getElementById('focus-icon-pause');
+        if (playIcon) playIcon.style.display = 'block';
+        if (pauseIcon) pauseIcon.style.display = 'none';
+      }
+    };
+
+    // Modal de Alarma
+    const showAlarmModal = (config) => {
+      const modal = document.getElementById('alarm-modal');
+      if (!modal) return;
+
+      const titleEl = document.getElementById('alarm-modal-title');
+      const descEl = document.getElementById('alarm-modal-desc');
+      const btnActionText = document.getElementById('alarm-btn-action-text');
+      const iconBox = document.getElementById('alarm-icon-box');
+      const icon = document.getElementById('alarm-icon');
+      const glow = document.getElementById('alarm-modal-glow');
+      const actionBtn = document.getElementById('alarm-btn-action');
+
+      if (titleEl) titleEl.innerText = config.title;
+      if (descEl) descEl.innerText = config.desc;
+      if (btnActionText) btnActionText.innerText = config.actionText || 'Comenzar Siguiente';
+
+      if (config.mode === 'break') {
+        if (iconBox) iconBox.className = "w-20 h-20 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center shadow-lg";
+        if (icon) icon.className = "text-emerald-400 animate-bounce";
+        if (glow) glow.className = "absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-48 bg-emerald-500/20 rounded-full blur-2xl pointer-events-none";
+        if (actionBtn) actionBtn.className = "flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-semibold transition-all duration-200 bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-900/30";
+      } else {
+        if (iconBox) iconBox.className = "w-20 h-20 rounded-full bg-blue-500/10 border border-blue-500/30 flex items-center justify-center shadow-lg";
+        if (icon) icon.className = "text-blue-400 animate-bounce";
+        if (glow) glow.className = "absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-48 bg-blue-500/20 rounded-full blur-2xl pointer-events-none";
+        if (actionBtn) actionBtn.className = "flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-semibold transition-all duration-200 bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/30";
+      }
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      lucide.createIcons();
+    };
+
+    const hideAlarmModal = () => {
+      const modal = document.getElementById('alarm-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    };
+
+    const acceptAlarmAndStartNext = () => {
+      soundManager.stopAlarm();
+      if (!timerIsActive) {
+        toggleTimer();
       }
     };
 
     // Events for buttons
-    document.getElementById('btn-pomodoro-toggle').onclick = toggleTimer;
-    document.getElementById('btn-pomodoro-reset').onclick = resetTimer;
-    document.getElementById('btn-focus-toggle').onclick = toggleTimer;
-    document.getElementById('btn-focus-reset').onclick = resetTimer;
+    const btnToggle = document.getElementById('btn-pomodoro-toggle');
+    const btnReset = document.getElementById('btn-pomodoro-reset');
+    const btnFocusToggle = document.getElementById('btn-focus-toggle');
+    const btnFocusReset = document.getElementById('btn-focus-reset');
+
+    if (btnToggle) btnToggle.onclick = toggleTimer;
+    if (btnReset) btnReset.onclick = resetTimer;
+    if (btnFocusToggle) btnFocusToggle.onclick = toggleTimer;
+    if (btnFocusReset) btnFocusReset.onclick = resetTimer;
 
     // Focus Mode Logic
     const enterFocusMode = () => {
@@ -2400,18 +3050,161 @@ Demuestre que:
     };
 
     const updateFocusLabels = () => {
-      document.getElementById('focus-mode-label').innerText = timerMode === 'work' ? 'Modo Enfoque' : 'Descanso';
-      
-      const selectedTemaId = document.getElementById('pomodoro-tema-select').value;
-      const focusTemaContainer = document.getElementById('focus-tema-container');
-      
-      if (selectedTemaId && timerMode === 'work') {
-        const tema = state.temas.find(t => t.id === selectedTemaId);
-        document.getElementById('focus-tema-name').innerText = tema ? tema.tema : selectedTemaId;
-        focusTemaContainer.style.display = 'block';
-      } else {
-        focusTemaContainer.style.display = 'none';
+      const isWork = timerMode === 'work';
+      const label = document.getElementById('focus-mode-label');
+      if (label) {
+        label.innerText = isWork ? 'Modo Enfoque' : '☕ Tiempo de Descanso';
+        label.className = isWork 
+          ? "text-blue-400 font-medium tracking-widest uppercase mb-4 text-sm" 
+          : "text-emerald-400 font-medium tracking-widest uppercase mb-4 text-sm";
       }
+      
+      const selectTema = document.getElementById('pomodoro-tema-select');
+      const selectedTemaId = selectTema ? selectTema.value : '';
+      const focusTemaContainer = document.getElementById('focus-tema-container');
+      const focusTemaName = document.getElementById('focus-tema-name');
+      
+      if (selectedTemaId && isWork) {
+        const tema = state.temas.find(t => t.id === selectedTemaId);
+        if (focusTemaName) focusTemaName.innerText = tema ? tema.tema : selectedTemaId;
+        if (focusTemaContainer) focusTemaContainer.style.display = 'block';
+      } else if (!isWork) {
+        if (focusTemaName) focusTemaName.innerText = "Relájate y recarga energías";
+        if (focusTemaContainer) focusTemaContainer.style.display = 'block';
+      } else {
+        if (focusTemaContainer) focusTemaContainer.style.display = 'none';
+      }
+    };
+
+    // --- Audio File Upload & Management (.mp3) ---
+    const handleAudioUpload = (event) => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      // Recommended max size for localStorage Data URL: ~4 MB
+      if (file.size > 4.5 * 1024 * 1024) {
+        showCustomAudioNotification("El archivo supera los 4.5 MB. Te recomendamos un audio más corto.", true);
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const dataUrl = e.target.result;
+          localStorage.setItem('stats_pomodoro_audio_data', dataUrl);
+          localStorage.setItem('stats_pomodoro_audio_name', file.name);
+
+          soundManager.customAudioSrc = dataUrl;
+          soundManager.customAudioName = file.name;
+
+          updateAudioUI();
+          showCustomAudioNotification(`Audio "${file.name}" cargado con éxito.`);
+          soundManager.testAlarm();
+        } catch(err) {
+          console.error("Error al guardar audio en localStorage:", err);
+          showCustomAudioNotification("No se pudo almacenar el archivo (posible límite de memoria). Prueba con un archivo más ligero.", true);
+        }
+      };
+      reader.readAsDataURL(file);
+    };
+
+    const resetDefaultSound = () => {
+      localStorage.removeItem('stats_pomodoro_audio_data');
+      localStorage.removeItem('stats_pomodoro_audio_name');
+
+      soundManager.customAudioSrc = null;
+      soundManager.customAudioName = null;
+      if (soundManager.currentAudio) {
+        try {
+          soundManager.currentAudio.pause();
+          soundManager.currentAudio.currentTime = 0;
+        } catch(e) {}
+        soundManager.currentAudio = null;
+      }
+
+      updateAudioUI();
+      showCustomAudioNotification("Se restableció el timbre sintetizado por defecto.");
+      soundManager.testAlarm();
+    };
+
+    const updateAudioUI = () => {
+      const badge = document.getElementById('current-sound-badge');
+      const resetBtn = document.getElementById('btn-reset-sound');
+      const infoBox = document.getElementById('custom-sound-info');
+      const nameText = document.getElementById('custom-sound-name');
+      const pomodoroSoundLabel = document.getElementById('pomodoro-sound-label');
+
+      if (soundManager.customAudioName) {
+        if (badge) {
+          badge.innerText = soundManager.customAudioName;
+          badge.className = "text-xs px-2.5 py-1 rounded-full bg-emerald-950/80 text-emerald-400 border border-emerald-800/80 font-mono truncate max-w-[180px]";
+          badge.title = soundManager.customAudioName;
+        }
+        if (resetBtn) resetBtn.classList.remove('hidden');
+        if (infoBox) infoBox.classList.remove('hidden');
+        if (nameText) nameText.innerText = `Audio activo: ${soundManager.customAudioName}`;
+        if (pomodoroSoundLabel) pomodoroSoundLabel.innerText = soundManager.customAudioName;
+      } else {
+        if (badge) {
+          badge.innerText = "Timbre Sintetizado";
+          badge.className = "text-xs px-2.5 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700 font-mono";
+          badge.title = "Timbre estándar de campanas";
+        }
+        if (resetBtn) resetBtn.classList.add('hidden');
+        if (infoBox) infoBox.classList.add('hidden');
+        if (pomodoroSoundLabel) pomodoroSoundLabel.innerText = "Audio .mp3";
+      }
+      lucide.createIcons();
+    };
+
+    const showCustomAudioNotification = (msg, isError = false) => {
+      const badge = document.getElementById('pomodoro-status-badge');
+      if (badge) {
+        const prev = badge.innerHTML;
+        const color = isError ? "text-red-400" : "text-emerald-400";
+        const icon = isError ? "alert-circle" : "check";
+        badge.innerHTML = `<i data-lucide="${icon}" class="w-3.5 h-3.5 ${color}"></i> <span class="${color}">${msg}</span>`;
+        lucide.createIcons();
+        setTimeout(() => {
+          badge.innerHTML = prev;
+          lucide.createIcons();
+        }, 3000);
+      }
+    };
+
+    const renderConfigPomodoro = () => {
+      const studyInput = document.getElementById('config-study-duration');
+      const breakInput = document.getElementById('config-break-duration');
+      if (studyInput) studyInput.value = timerPreset;
+      if (breakInput) breakInput.value = timerBreakPreset;
+      updateAudioUI();
+    };
+
+    const handleConfigDurationChange = () => {
+      const studyInput = document.getElementById('config-study-duration');
+      const breakInput = document.getElementById('config-break-duration');
+      
+      if (studyInput && studyInput.value) {
+        const val = parseInt(studyInput.value);
+        if (!isNaN(val) && val > 0) {
+          timerPreset = val;
+          localStorage.setItem('stats_pomodoro_work', val);
+          if (timerMode === 'work' && !timerIsActive) {
+            timerTimeLeft = val * 60;
+            updateTimerDisplay();
+          }
+        }
+      }
+
+      if (breakInput && breakInput.value) {
+        const val = parseInt(breakInput.value);
+        if (!isNaN(val) && val > 0) {
+          setBreakDuration(val, true);
+        }
+      }
+
+      updateModeBadges();
+      renderPomodoroPresets();
     };
 
     const renderEstadisticas = () => {
@@ -2566,6 +3359,7 @@ Demuestre que:
          renderDemosMinimo();
       }
       if (tabId === 'objetivos') renderObjetivos();
+      if (tabId === 'config') renderConfigPomodoro();
     };
 
     const renderObjetivos = () => {
@@ -3886,7 +4680,7 @@ Demuestre que:
       }
 
       state = { temas: [...DEFAULT_SYLLABUS], sesiones: [], objetivos: [] };
-      ['temas', 'sesiones', 'objetivos'].forEach(k => localStorage.removeItem(`stats_${k}`));
+      ['temas', 'sesiones', 'objetivos', 'pomodoro_work', 'pomodoro_break'].forEach(k => localStorage.removeItem(`stats_${k}`));
       saveStateItem('temas'); // Guarda el default
       
       // Reset button
@@ -3922,6 +4716,10 @@ Demuestre que:
       updatePomodoroSelect(); // ¡Esto arregla que los temas ahora se carguen al iniciar!
       renderPomodoroPresets();
       updateTimerDisplay();
+      updateModeBadges();
+      syncQuickBreakSelect();
+      updatePomodoroTheme();
+      updateAudioUI();
       setActiveTab('dashboard'); // Triggers initial render
     };
 
