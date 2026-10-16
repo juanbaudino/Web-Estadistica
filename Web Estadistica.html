@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Estadística 3</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
   
@@ -15,11 +15,18 @@
     :root {
       color-scheme: dark;
     }
+
+    html, body {
+      overflow-x: hidden;
+      width: 100%;
+      -webkit-text-size-adjust: 100%;
+    }
     
     body {
       background-color: #020617; /* slate-950 */
       color: #e2e8f0; /* slate-200 */
       font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -32,7 +39,15 @@
       cursor: pointer;
     }
     
-    .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+    .pb-safe { padding-bottom: max(env(safe-area-inset-bottom, 0px), 0.5rem); }
+    .pb-mobile-nav { padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px)); }
+
+    /* Prevents auto-zoom on input focus on iOS Safari */
+    @media (max-width: 768px) {
+      input, select, textarea {
+        font-size: 16px !important;
+      }
+    }
 
     /* Utilities for showing/hiding sections */
     .hidden-section { display: none !important; }
@@ -149,21 +164,38 @@
     </div>
   </aside>
 
-  <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
-    <div class="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar relative">
+  <main class="flex-1 flex flex-col h-screen h-[100dvh] overflow-hidden relative w-full">
+    <!-- Mobile Top Header Bar -->
+    <header class="md:hidden flex items-center justify-between px-4 py-3 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 z-30 shrink-0">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-md shadow-blue-900/50 shrink-0">
+          <i data-lucide="book-marked" class="text-white" style="width: 16px; height: 16px;"></i>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-base tracking-tight text-slate-100">Estadística 3</span>
+          <span id="mobile-current-tab-badge" class="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-blue-900/40 text-blue-400 border border-blue-800/50">Dashboard</span>
+        </div>
+      </div>
+
+      <button onclick="toggleMobileDrawer()" class="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors border border-slate-800 active:scale-95" aria-label="Abrir Menú">
+        <i data-lucide="menu" style="width: 20px; height: 20px;"></i>
+      </button>
+    </header>
+
+    <div class="flex-1 overflow-y-auto p-3 sm:p-5 md:p-8 pb-28 md:pb-8 custom-scrollbar relative w-full">
       
       <!-- Dashboard View -->
-      <div id="view-dashboard" class="view-section hidden-section space-y-6 animate-in-slide">
-        <header class="mb-8">
-          <h1 class="text-3xl font-bold text-slate-100 mb-1">Dashboard</h1>
-          <p class="text-slate-400">Resumen de tu preparación para Estadística 3</p>
+      <div id="view-dashboard" class="view-section hidden-section space-y-4 sm:space-y-6 animate-in-slide">
+        <header class="mb-4 sm:mb-8">
+          <h1 class="text-2xl sm:text-3xl font-bold text-slate-100 mb-1">Dashboard</h1>
+          <p class="text-xs sm:text-sm text-slate-400">Resumen de tu preparación para Estadística 3</p>
         </header>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="dashboard-exam-countdown">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4" id="dashboard-exam-countdown">
           <!-- Contadores de mesas de examen generados por JS -->
         </div>
 
-        <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-5 shadow-lg backdrop-blur-sm bg-gradient-to-br from-slate-900 to-slate-900/40 border-slate-800/80 relative overflow-hidden">
+        <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4 sm:p-5 shadow-lg backdrop-blur-sm bg-gradient-to-br from-slate-900 to-slate-900/40 border-slate-800/80 relative overflow-hidden">
           <div class="absolute top-0 left-0 w-1 h-full bg-blue-600/50"></div>
           <div class="flex justify-between items-start mb-2">
             <p class="text-xs uppercase tracking-wider text-blue-400 font-semibold">Cita del Día</p>
@@ -171,19 +203,19 @@
               <i data-lucide="refresh-cw" style="width: 14px; height: 14px;"></i>
             </button>
           </div>
-          <blockquote class="text-lg text-slate-200 italic font-serif leading-relaxed mb-2" id="quote-text">
+          <blockquote class="text-base sm:text-lg text-slate-200 italic font-serif leading-relaxed mb-2" id="quote-text">
             <!-- Quote Text -->
           </blockquote>
-          <p class="text-sm text-slate-500 text-right" id="quote-ref"><!-- Quote Ref --></p>
+          <p class="text-xs sm:text-sm text-slate-500 text-right" id="quote-ref"><!-- Quote Ref --></p>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="dashboard-stats">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4" id="dashboard-stats">
           <!-- Stats generated by JS -->
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-5 shadow-lg backdrop-blur-sm">
-            <h3 class="text-lg font-semibold text-slate-200 mb-4 flex items-center gap-2">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4 sm:p-5 shadow-lg backdrop-blur-sm">
+            <h3 class="text-base sm:text-lg font-semibold text-slate-200 mb-3 sm:mb-4 flex items-center gap-2">
               <i data-lucide="alert-circle" class="text-orange-400" style="width: 18px; height: 18px;"></i> Repasos Pendientes
             </h3>
             <div id="dashboard-repasos">
@@ -191,8 +223,8 @@
             </div>
           </div>
 
-          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-5 shadow-lg backdrop-blur-sm">
-            <h3 class="text-lg font-semibold text-slate-200 mb-4 flex items-center gap-2">
+          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4 sm:p-5 shadow-lg backdrop-blur-sm">
+            <h3 class="text-base sm:text-lg font-semibold text-slate-200 mb-3 sm:mb-4 flex items-center gap-2">
               <i data-lucide="activity" class="text-blue-400" style="width: 18px; height: 18px;"></i> Actividad Reciente
             </h3>
             <div id="dashboard-actividad">
@@ -202,7 +234,7 @@
         </div>
 
         <!-- Sección de Música para Estudiar: Rock Nacional -->
-        <div id="dashboard-rock-nacional" class="bg-slate-900/80 border border-slate-800/80 rounded-xl p-5 shadow-lg backdrop-blur-sm relative overflow-hidden">
+        <div id="dashboard-rock-nacional" class="bg-slate-900/80 border border-slate-800/80 rounded-xl p-4 sm:p-5 shadow-lg backdrop-blur-sm relative overflow-hidden">
           <!-- Decoración ambiental sutil de fondo -->
           <div class="absolute -top-16 -right-16 w-52 h-52 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
           <div class="absolute -bottom-16 -left-16 w-52 h-52 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -246,120 +278,120 @@
 
       </div>
 
-      <div id="view-temario" class="view-section hidden-section space-y-6 h-full flex flex-col animate-in-slide">
-        <header class="flex justify-between items-end shrink-0">
+      <div id="view-temario" class="view-section hidden-section space-y-4 sm:space-y-6 md:h-full flex flex-col animate-in-slide">
+        <header class="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-3 sm:gap-4 shrink-0">
           <div>
-            <h1 class="text-3xl font-bold text-slate-100 mb-1">Temario</h1>
-            <p class="text-slate-400">Organiza y sigue el programa oficial.</p>
+            <h1 class="text-2xl sm:text-3xl font-bold text-slate-100 mb-1">Temario</h1>
+            <p class="text-xs sm:text-sm text-slate-400">Organiza y sigue el programa oficial.</p>
           </div>
-          <div class="flex gap-3">
-            <button onclick="openImportarListaModal()" class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 text-sm bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700 shadow-md shadow-slate-900/20">
+          <div class="flex gap-2 w-full sm:w-auto">
+            <button onclick="openImportarListaModal()" class="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition-all duration-300 text-xs sm:text-sm bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700 shadow-md shadow-slate-900/20">
               <i data-lucide="clipboard-list" style="width: 16px; height: 16px;"></i> Importar Lista
             </button>
-            <button onclick="openTemaModal()" class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 text-sm bg-blue-600 text-white hover:bg-blue-500 shadow-md shadow-blue-900/20">
+            <button onclick="openTemaModal()" class="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition-all duration-300 text-xs sm:text-sm bg-blue-600 text-white hover:bg-blue-500 shadow-md shadow-blue-900/20">
               <i data-lucide="plus" style="width: 16px; height: 16px;"></i> Nuevo Tema
             </button>
           </div>
         </header>
 
-        <div id="temario-container" class="flex-1 overflow-y-auto custom-scrollbar space-y-4 pb-4 pr-2">
+        <div id="temario-container" class="flex-1 md:overflow-y-auto custom-scrollbar space-y-3 sm:space-y-4 pb-4 pr-0 sm:pr-2">
           <!-- Accordions generated by JS -->
         </div>
       </div>
 
-      <div id="view-pomodoro" class="view-section hidden-section space-y-6 max-w-4xl mx-auto animate-in-slide w-full">
-        <header class="text-center mb-8">
-          <h1 class="text-3xl font-bold text-slate-100 mb-2">Temporizador Pomodoro</h1>
-          <p class="text-slate-400">Mantén el enfoque con bloques de estudio y descansos personalizados.</p>
+      <div id="view-pomodoro" class="view-section hidden-section space-y-4 sm:space-y-6 max-w-4xl mx-auto animate-in-slide w-full">
+        <header class="text-center mb-4 sm:mb-8">
+          <h1 class="text-2xl sm:text-3xl font-bold text-slate-100 mb-1 sm:mb-2">Temporizador Pomodoro</h1>
+          <p class="text-xs sm:text-sm text-slate-400">Mantén el enfoque con bloques de estudio y descansos personalizados.</p>
         </header>
 
-        <div class="bg-slate-900/80 border border-slate-800/80 rounded-xl p-8 sm:p-12 shadow-lg backdrop-blur-sm flex flex-col items-center bg-gradient-to-b from-slate-900/50 to-slate-900/90 relative overflow-hidden">
-          <div id="pomodoro-glow" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl pointer-events-none transition-all duration-500"></div>
+        <div class="bg-slate-900/80 border border-slate-800/80 rounded-xl p-4 sm:p-8 md:p-12 shadow-lg backdrop-blur-sm flex flex-col items-center bg-gradient-to-b from-slate-900/50 to-slate-900/90 relative overflow-hidden">
+          <div id="pomodoro-glow" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 sm:w-64 h-48 sm:h-64 bg-blue-600/10 rounded-full blur-3xl pointer-events-none transition-all duration-500"></div>
           
           <!-- Selector de Modo: Estudio / Descanso -->
-          <div class="flex items-center gap-1.5 mb-6 bg-slate-950 p-1.5 rounded-xl border border-slate-800 shadow-inner z-10">
-            <button id="btn-mode-work" onclick="switchTimerMode('work')" class="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold transition-all bg-blue-600 text-white shadow-md shadow-blue-900/30">
-              <i data-lucide="brain" style="width: 16px; height: 16px;"></i>
+          <div class="flex items-center gap-1.5 mb-4 sm:mb-6 bg-slate-950 p-1.5 rounded-xl border border-slate-800 shadow-inner z-10 w-full max-w-xs justify-center">
+            <button id="btn-mode-work" onclick="switchTimerMode('work')" class="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-blue-600 text-white shadow-md shadow-blue-900/30">
+              <i data-lucide="brain" style="width: 15px; height: 15px;"></i>
               <span>Estudio</span>
-              <span id="badge-work-duration" class="ml-1 text-xs opacity-90 px-1.5 py-0.5 rounded bg-blue-700/60 font-mono">30m</span>
+              <span id="badge-work-duration" class="ml-1 text-[10px] sm:text-xs opacity-90 px-1.5 py-0.5 rounded bg-blue-700/60 font-mono">30m</span>
             </button>
-            <button id="btn-mode-break" onclick="switchTimerMode('shortBreak')" class="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-slate-200">
-              <i data-lucide="coffee" style="width: 16px; height: 16px;"></i>
+            <button id="btn-mode-break" onclick="switchTimerMode('shortBreak')" class="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all text-slate-400 hover:text-slate-200">
+              <i data-lucide="coffee" style="width: 15px; height: 15px;"></i>
               <span>Descanso</span>
-              <span id="badge-break-duration" class="ml-1 text-xs opacity-90 px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 font-mono">5m</span>
+              <span id="badge-break-duration" class="ml-1 text-[10px] sm:text-xs opacity-90 px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 font-mono">5m</span>
             </button>
           </div>
 
           <!-- Presets buttons JS -->
-          <div class="flex flex-wrap items-center justify-center gap-2 mb-6 bg-slate-950 p-1.5 rounded-lg border border-slate-800 z-10" id="pomodoro-presets">
+          <div class="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 mb-4 sm:mb-6 bg-slate-950 p-1.5 rounded-lg border border-slate-800 z-10 max-w-full" id="pomodoro-presets">
           </div>
 
           <!-- Status badge indicator -->
-          <div id="pomodoro-status-badge" class="mb-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-blue-950/80 text-blue-400 border border-blue-800/60 flex items-center gap-1.5 z-10">
+          <div id="pomodoro-status-badge" class="mb-2 px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold uppercase tracking-wider bg-blue-950/80 text-blue-400 border border-blue-800/60 flex items-center gap-1.5 z-10">
             <span id="pomodoro-status-dot" class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
             <span id="pomodoro-status-text">Sesión de Estudio</span>
           </div>
 
           <!-- Timer Display -->
-          <div class="text-8xl font-light text-slate-100 tracking-tighter tabular-nums mb-8 z-10 select-none transition-colors duration-300" id="pomodoro-display">
+          <div class="text-6xl sm:text-7xl md:text-8xl font-light text-slate-100 tracking-tighter tabular-nums my-4 sm:my-6 z-10 select-none transition-colors duration-300" id="pomodoro-display">
             30:00
           </div>
 
           <!-- Selector de Temas (solo visible en modo Estudio) -->
-          <div id="pomodoro-tema-wrapper" class="w-full max-w-sm mb-8 space-y-3 z-10">
-            <label class="block text-xs font-medium text-slate-500 mb-2 text-center uppercase tracking-wider">¿Qué vas a estudiar?</label>
+          <div id="pomodoro-tema-wrapper" class="w-full max-w-sm mb-6 sm:mb-8 space-y-2.5 sm:space-y-3 z-10">
+            <label class="block text-xs font-medium text-slate-500 mb-1 text-center uppercase tracking-wider">¿Qué vas a estudiar?</label>
             
-            <select id="pomodoro-unidad-select" onchange="handleUnidadChange()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-blue-500 text-center appearance-none cursor-pointer">
+            <select id="pomodoro-unidad-select" onchange="handleUnidadChange()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2.5 sm:py-3 text-sm text-slate-200 focus:outline-none focus:border-blue-500 text-center cursor-pointer">
               <option value="">Seleccionar Unidad / Capítulo...</option>
             </select>
             
-            <select id="pomodoro-tema-select" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-3 text-sm text-slate-200 focus:outline-none focus:border-blue-500 text-center appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+            <select id="pomodoro-tema-select" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2.5 sm:py-3 text-sm text-slate-200 focus:outline-none focus:border-blue-500 text-center cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed" disabled>
               <option value="">Primero selecciona una unidad...</option>
             </select>
           </div>
 
           <!-- Mensaje relajante en modo Descanso (oculto en estudio) -->
-          <div id="pomodoro-break-wrapper" class="hidden w-full max-w-sm mb-8 p-4 rounded-xl bg-emerald-950/20 border border-emerald-900/40 text-center text-sm text-emerald-300 z-10">
-            <i data-lucide="coffee" class="w-6 h-6 mx-auto mb-2 text-emerald-400"></i>
-            <p class="font-medium text-emerald-200 mb-1">¡Tiempo de despejarte!</p>
+          <div id="pomodoro-break-wrapper" class="hidden w-full max-w-sm mb-6 sm:mb-8 p-3 sm:p-4 rounded-xl bg-emerald-950/20 border border-emerald-900/40 text-center text-xs sm:text-sm text-emerald-300 z-10">
+            <i data-lucide="coffee" class="w-5 h-5 sm:w-6 sm:h-6 mx-auto mb-1.5 sm:mb-2 text-emerald-400"></i>
+            <p class="font-medium text-emerald-200 mb-0.5 sm:mb-1">¡Tiempo de despejarte!</p>
             <p class="text-xs text-emerald-400/80">Tomá un vaso de agua, estirá las piernas o descansá la vista.</p>
           </div>
 
           <!-- Botones de Acción -->
-          <div class="flex gap-4 z-10">
-            <button id="btn-pomodoro-toggle" class="flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg font-semibold transition-all duration-300 w-36 !text-lg bg-blue-600 text-white hover:bg-blue-500 shadow-md shadow-blue-900/20">
+          <div class="flex flex-wrap sm:flex-nowrap items-center justify-center gap-2 sm:gap-4 z-10 w-full max-w-sm">
+            <button id="btn-pomodoro-toggle" class="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg font-semibold transition-all duration-300 sm:w-36 text-base sm:text-lg bg-blue-600 text-white hover:bg-blue-500 shadow-md shadow-blue-900/20">
               Iniciar
             </button>
-            <button id="btn-pomodoro-reset" class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 text-sm bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700" title="Reiniciar temporizador">
-              <i data-lucide="rotate-ccw" style="width: 20px; height: 20px;"></i>
+            <button id="btn-pomodoro-reset" class="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-lg font-medium transition-all duration-300 text-sm bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700" title="Reiniciar temporizador">
+              <i data-lucide="rotate-ccw" style="width: 18px; height: 18px;"></i>
             </button>
-            <button onclick="enterFocusMode()" class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-all duration-300 text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 border border-slate-800 hover:border-blue-500/50" title="Modo Enfoque">
-              <i data-lucide="maximize-2" class="text-blue-400" style="width: 20px; height: 20px;"></i>
+            <button onclick="enterFocusMode()" class="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-lg font-medium transition-all duration-300 text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 border border-slate-800 hover:border-blue-500/50" title="Modo Enfoque">
+              <i data-lucide="maximize-2" class="text-blue-400" style="width: 18px; height: 18px;"></i>
             </button>
-            <button onclick="soundManager.testAlarm()" class="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg font-medium transition-all duration-300 text-sm text-slate-400 hover:text-amber-400 hover:bg-slate-800/50 border border-slate-800 hover:border-amber-500/50" title="Probar sonido de alarma">
-              <i data-lucide="bell" class="text-amber-400" style="width: 20px; height: 20px;"></i>
+            <button onclick="soundManager.testAlarm()" class="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-lg font-medium transition-all duration-300 text-sm text-slate-400 hover:text-amber-400 hover:bg-slate-800/50 border border-slate-800 hover:border-amber-500/50" title="Probar sonido de alarma">
+              <i data-lucide="bell" class="text-amber-400" style="width: 18px; height: 18px;"></i>
             </button>
           </div>
 
           <!-- Barra de ajustes rápidos: Configurar descanso y Probar alarma -->
-          <div class="flex flex-wrap items-center justify-center gap-4 text-xs text-slate-400 mt-8 pt-6 border-t border-slate-800/80 w-full max-w-md z-10">
+          <div class="flex flex-wrap items-center justify-center gap-2.5 sm:gap-4 text-xs text-slate-400 mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-slate-800/80 w-full max-w-md z-10">
             <div class="flex items-center gap-2">
               <i data-lucide="coffee" class="w-3.5 h-3.5 text-emerald-400"></i>
               <span class="text-slate-400">Descanso:</span>
-              <select id="quick-break-select" onchange="handleQuickBreakChange(this.value)" class="bg-slate-950 border border-slate-800 text-slate-200 rounded px-2.5 py-1 text-xs focus:outline-none focus:border-blue-500 cursor-pointer">
-                <option value="5">5 minutos</option>
-                <option value="10">10 minutos</option>
-                <option value="15">15 minutos</option>
-                <option value="20">20 minutos</option>
+              <select id="quick-break-select" onchange="handleQuickBreakChange(this.value)" class="bg-slate-950 border border-slate-800 text-slate-200 rounded px-2 py-1 text-xs focus:outline-none focus:border-blue-500 cursor-pointer">
+                <option value="5">5 min</option>
+                <option value="10">10 min</option>
+                <option value="15">15 min</option>
+                <option value="20">20 min</option>
                 <option value="custom">Personalizado...</option>
               </select>
             </div>
-            <div class="h-3.5 w-px bg-slate-800"></div>
+            <div class="hidden sm:block h-3.5 w-px bg-slate-800"></div>
             <button onclick="soundManager.testAlarm()" class="flex items-center gap-1.5 text-slate-400 hover:text-amber-400 transition-colors py-1 px-2 rounded hover:bg-slate-800/50" title="Probar sonido actual">
               <i data-lucide="volume-2" class="w-3.5 h-3.5 text-amber-400"></i>
               <span>Probar</span>
             </button>
-            <div class="h-3.5 w-px bg-slate-800"></div>
+            <div class="hidden sm:block h-3.5 w-px bg-slate-800"></div>
             <label class="flex items-center gap-1.5 text-slate-400 hover:text-blue-400 transition-colors py-1 px-2 rounded hover:bg-slate-800/50 cursor-pointer" title="Cambiar sonido por un archivo .mp3">
               <i data-lucide="music" class="w-3.5 h-3.5 text-blue-400"></i>
               <span id="pomodoro-sound-label">Audio .mp3</span>
@@ -369,28 +401,28 @@
         </div>
       </div>
 
-      <div id="view-estadisticas" class="view-section hidden-section space-y-6 h-full flex flex-col animate-in-slide">
-        <header class="mb-4 shrink-0">
-          <h1 class="text-3xl font-bold text-slate-100 mb-1">Estadísticas</h1>
-          <p class="text-slate-400">Analiza tu rendimiento y constancia.</p>
+      <div id="view-estadisticas" class="view-section hidden-section space-y-4 sm:space-y-6 md:h-full flex flex-col animate-in-slide">
+        <header class="mb-2 sm:mb-4 shrink-0">
+          <h1 class="text-2xl sm:text-3xl font-bold text-slate-100 mb-1">Estadísticas</h1>
+          <p class="text-xs sm:text-sm text-slate-400">Analiza tu rendimiento y constancia.</p>
         </header>
 
-        <div class="grid grid-cols-2 gap-4 shrink-0" id="stats-pomodoro-summary">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 shrink-0" id="stats-pomodoro-summary">
           <!-- Resumen de tiempo/cantidad de Pomodoros generado por JS -->
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1 min-h-[400px]">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 flex-1 min-h-[350px]">
           <!-- Bar Chart -->
-          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-5 shadow-lg backdrop-blur-sm flex flex-col h-full min-h-[300px]">
-            <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-6">Horas de Estudio (Últimos días)</h3>
-            <div id="stats-bar-chart" class="flex-1 min-h-0 flex items-end justify-between gap-2 pb-4">
+          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4 sm:p-5 shadow-lg backdrop-blur-sm flex flex-col h-full min-h-[260px] sm:min-h-[300px]">
+            <h3 class="text-xs sm:text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4 sm:mb-6">Horas de Estudio (Últimos días)</h3>
+            <div id="stats-bar-chart" class="flex-1 min-h-0 flex items-end justify-between gap-1.5 sm:gap-2 pb-2 sm:pb-4">
               <!-- Bars JS -->
             </div>
           </div>
 
           <!-- Donut Chart -->
-          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-5 shadow-lg backdrop-blur-sm flex flex-col h-full min-h-[300px]">
-            <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-6">Rendimiento en Ejercicios</h3>
+          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4 sm:p-5 shadow-lg backdrop-blur-sm flex flex-col h-full min-h-[260px] sm:min-h-[300px]">
+            <h3 class="text-xs sm:text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4 sm:mb-6">Rendimiento en Ejercicios</h3>
             <div id="stats-donut-chart" class="flex-1 min-h-0 flex flex-col items-center justify-center">
               <!-- Donut JS -->
             </div>
@@ -510,56 +542,56 @@
         </div>
       </div>
 
-      <div id="view-demostraciones" class="view-section hidden-section space-y-6 h-full flex flex-col animate-in-slide">
-        <header class="shrink-0 mb-4">
-          <h1 class="text-3xl font-bold text-slate-100 mb-1">Demostraciones</h1>
-          <p class="text-slate-400">Consulta, practica y sortea las demostraciones del programa.</p>
+      <div id="view-demostraciones" class="view-section hidden-section space-y-4 sm:space-y-6 md:h-full flex flex-col animate-in-slide">
+        <header class="shrink-0 mb-2 sm:mb-4">
+          <h1 class="text-2xl sm:text-3xl font-bold text-slate-100 mb-1">Demostraciones</h1>
+          <p class="text-xs sm:text-sm text-slate-400">Consulta, practica y sortea las demostraciones del programa.</p>
           
-          <div class="flex gap-2 mt-6 p-1 bg-slate-900 border border-slate-800 rounded-lg w-max">
-            <button onclick="setDemosSubView('todas')" id="tab-demos-todas" class="px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 bg-slate-800 text-slate-200 shadow-sm">
-              Todas las Demostraciones
+          <div class="flex gap-1.5 sm:gap-2 mt-4 sm:mt-6 p-1 bg-slate-900 border border-slate-800 rounded-lg w-full sm:w-max overflow-x-auto custom-scrollbar">
+            <button onclick="setDemosSubView('todas')" id="tab-demos-todas" class="flex-1 sm:flex-initial whitespace-nowrap px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-md transition-all duration-200 bg-slate-800 text-slate-200 shadow-sm text-center">
+              Todas
             </button>
-            <button onclick="setDemosSubView('sorteo')" id="tab-demos-sorteo" class="px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50">
+            <button onclick="setDemosSubView('sorteo')" id="tab-demos-sorteo" class="flex-1 sm:flex-initial whitespace-nowrap px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-md transition-all duration-200 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-center">
               Sorteo
             </button>
-            <button onclick="setDemosSubView('minimo')" id="tab-demos-minimo" class="px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50">
+            <button onclick="setDemosSubView('minimo')" id="tab-demos-minimo" class="flex-1 sm:flex-initial whitespace-nowrap px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-md transition-all duration-200 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 text-center">
               Mínimo Indispensable
             </button>
           </div>
         </header>
 
         <!-- Sub-view: Todas -->
-        <div id="subview-demos-todas" class="bg-slate-900/80 border border-slate-800 rounded-xl shadow-lg backdrop-blur-sm flex-1 overflow-hidden flex flex-col p-0 min-h-[400px]">
-          <div class="p-4 border-b border-slate-800 bg-slate-900/50 flex gap-4 items-center">
+        <div id="subview-demos-todas" class="bg-slate-900/80 border border-slate-800 rounded-xl shadow-lg backdrop-blur-sm flex-1 md:overflow-hidden flex flex-col p-0 min-h-[350px] sm:min-h-[400px]">
+          <div class="p-3 sm:p-4 border-b border-slate-800 bg-slate-900/50 flex gap-3 sm:gap-4 items-center">
             <div class="relative flex-1 max-w-md">
               <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" style="width: 16px; height: 16px;"></i>
-              <input type="text" id="search-demos-todas" onkeyup="renderDemosTodas()" placeholder="Buscar demostración..." class="w-full pl-9 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-slate-200 focus:outline-none focus:border-blue-500 transition-colors">
+              <input type="text" id="search-demos-todas" onkeyup="renderDemosTodas()" placeholder="Buscar demostración..." class="w-full pl-9 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-blue-500 transition-colors">
             </div>
-            <span class="text-xs font-medium text-slate-500 uppercase tracking-wider" id="count-demos-todas"></span>
+            <span class="text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap" id="count-demos-todas"></span>
           </div>
           <div class="overflow-x-auto overflow-y-auto flex-1 custom-scrollbar">
-            <div id="list-demos-todas" class="min-w-max">
+            <div id="list-demos-todas" class="min-w-full">
               <!-- Demos JS -->
             </div>
           </div>
         </div>
 
         <!-- Sub-view: Sorteo -->
-        <div id="subview-demos-sorteo" class="hidden-section bg-slate-900/80 border border-slate-800 rounded-xl shadow-lg backdrop-blur-sm flex-1 flex flex-col items-center justify-center p-8 relative overflow-hidden min-h-[400px]">
-          <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div id="subview-demos-sorteo" class="hidden-section bg-slate-900/80 border border-slate-800 rounded-xl shadow-lg backdrop-blur-sm flex-1 flex flex-col items-center justify-center p-4 sm:p-8 relative overflow-hidden min-h-[350px] sm:min-h-[400px]">
+          <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 sm:w-96 h-72 sm:h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
           
-          <button onclick="realizarSorteo()" class="group relative flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-bold transition-all duration-300 text-lg bg-gradient-to-b from-blue-500 to-blue-700 text-white hover:from-blue-400 hover:to-blue-600 shadow-xl shadow-blue-900/30 hover:shadow-blue-500/20 border border-blue-400/20 hover:-translate-y-1 mb-12 overflow-hidden">
+          <button onclick="realizarSorteo()" class="group relative flex items-center justify-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-bold transition-all duration-300 text-base sm:text-lg bg-gradient-to-b from-blue-500 to-blue-700 text-white hover:from-blue-400 hover:to-blue-600 shadow-xl shadow-blue-900/30 hover:shadow-blue-500/20 border border-blue-400/20 hover:-translate-y-1 mb-8 sm:mb-12 overflow-hidden w-full sm:w-auto">
             <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
-            <i data-lucide="dices" style="width: 28px; height: 28px;" class="relative z-10 group-hover:rotate-12 transition-transform"></i>
+            <i data-lucide="dices" style="width: 24px; height: 24px;" class="relative z-10 group-hover:rotate-12 transition-transform sm:!w-7 sm:!h-7"></i>
             <span class="relative z-10 tracking-wide uppercase">Seleccionar al azar</span>
           </button>
 
           <div id="resultado-sorteo" class="w-full max-w-2xl opacity-0 transition-opacity duration-500 pointer-events-none">
-            <div class="bg-slate-950 border border-blue-900/50 p-8 rounded-2xl shadow-2xl relative">
-              <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-xs font-bold uppercase tracking-widest py-1 px-4 rounded-full shadow-lg">
+            <div class="bg-slate-950 border border-blue-900/50 p-4 sm:p-8 rounded-2xl shadow-2xl relative">
+              <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[11px] sm:text-xs font-bold uppercase tracking-widest py-1 px-3 sm:px-4 rounded-full shadow-lg whitespace-nowrap">
                 Demostración Seleccionada
               </div>
-              <div id="sorteo-content" class="text-center mt-4">
+              <div id="sorteo-content" class="text-center mt-3 sm:mt-4">
                 <!-- Content injected by JS -->
               </div>
             </div>
@@ -567,62 +599,62 @@
         </div>
 
         <!-- Sub-view: Minimo -->
-        <div id="subview-demos-minimo" class="hidden-section bg-slate-900/80 border border-slate-800 rounded-xl shadow-lg backdrop-blur-sm flex-1 overflow-hidden flex flex-col p-0 min-h-[400px]">
-           <div class="p-4 border-b border-emerald-900/30 bg-emerald-950/20 flex gap-4 items-center">
+        <div id="subview-demos-minimo" class="hidden-section bg-slate-900/80 border border-slate-800 rounded-xl shadow-lg backdrop-blur-sm flex-1 md:overflow-hidden flex flex-col p-0 min-h-[350px] sm:min-h-[400px]">
+           <div class="p-3 sm:p-4 border-b border-emerald-900/30 bg-emerald-950/20 flex gap-3 sm:gap-4 items-center">
             <i data-lucide="shield-alert" class="text-emerald-500" style="width: 20px; height: 20px;"></i>
             <div>
-              <h3 class="text-sm font-semibold text-emerald-400">Mínimo Indispensable</h3>
+              <h3 class="text-xs sm:text-sm font-semibold text-emerald-400">Mínimo Indispensable</h3>
               <p class="text-xs text-slate-400">Conceptos críticos para aprobar.</p>
             </div>
           </div>
           <div class="overflow-x-auto overflow-y-auto flex-1 custom-scrollbar">
-            <div id="list-demos-minimo" class="min-w-max">
+            <div id="list-demos-minimo" class="min-w-full">
               <!-- Minimo JS -->
             </div>
           </div>
         </div>
       </div>
 
-      <div id="view-practicos" class="view-section hidden-section space-y-6 h-full flex flex-col animate-in-slide">
-        <header class="shrink-0 mb-2">
-          <h1 class="text-3xl font-bold text-slate-100 mb-1">Prácticos</h1>
-          <p class="text-slate-400">Guía de ejercicios y seguimiento de tu progreso.</p>
+      <div id="view-practicos" class="view-section hidden-section space-y-4 sm:space-y-6 md:h-full flex flex-col animate-in-slide">
+        <header class="shrink-0 mb-1 sm:mb-2">
+          <h1 class="text-2xl sm:text-3xl font-bold text-slate-100 mb-1">Prácticos</h1>
+          <p class="text-xs sm:text-sm text-slate-400">Guía de ejercicios y seguimiento de tu progreso.</p>
         </header>
 
         <!-- Panel Superior (Progreso y Continuar) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 shrink-0">
-          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-5 shadow-lg backdrop-blur-sm flex flex-col justify-center">
-            <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-2">Progreso General</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 shrink-0">
+          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4 sm:p-5 shadow-lg backdrop-blur-sm flex flex-col justify-center">
+            <h3 class="text-xs sm:text-sm font-semibold text-slate-400 uppercase tracking-wider mb-2">Progreso General</h3>
             <div class="flex justify-between items-end mb-2">
-              <span class="text-2xl font-bold text-slate-100" id="practicos-progreso-text">0 / 0 completados</span>
-              <span class="text-lg font-medium text-blue-400" id="practicos-progreso-pct">0%</span>
+              <span class="text-xl sm:text-2xl font-bold text-slate-100" id="practicos-progreso-text">0 / 0 completados</span>
+              <span class="text-base sm:text-lg font-medium text-blue-400" id="practicos-progreso-pct">0%</span>
             </div>
             <div class="w-full bg-slate-800 rounded-full h-2">
               <div class="bg-blue-500 h-2 rounded-full transition-all duration-1000" id="practicos-progreso-bar" style="width: 0%"></div>
             </div>
           </div>
           
-          <div class="bg-gradient-to-br from-blue-900/40 to-slate-900/80 border border-blue-800/50 rounded-xl p-5 shadow-lg backdrop-blur-sm flex flex-col justify-between" id="practicos-continuar-panel">
+          <div class="bg-gradient-to-br from-blue-900/40 to-slate-900/80 border border-blue-800/50 rounded-xl p-4 sm:p-5 shadow-lg backdrop-blur-sm flex flex-col justify-between" id="practicos-continuar-panel">
             <div>
-              <h3 class="text-sm font-semibold text-blue-400 uppercase tracking-wider mb-1 flex items-center gap-2">
+              <h3 class="text-xs sm:text-sm font-semibold text-blue-400 uppercase tracking-wider mb-1 flex items-center gap-2">
                 <i data-lucide="play-circle" style="width: 16px; height: 16px;"></i> Continuar donde dejaste
               </h3>
-              <p class="text-slate-300 font-medium text-lg truncate" id="practicos-continuar-titulo">Buscando ejercicio...</p>
+              <p class="text-slate-300 font-medium text-base sm:text-lg truncate" id="practicos-continuar-titulo">Buscando ejercicio...</p>
             </div>
-            <button onclick="continuarPractico()" class="mt-3 w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 px-4 rounded-lg transition-colors shadow-md shadow-blue-900/20 text-sm">
+            <button onclick="continuarPractico()" class="mt-3 w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 px-4 rounded-lg transition-colors shadow-md shadow-blue-900/20 text-xs sm:text-sm">
               Continuar Ejercicio
             </button>
           </div>
         </div>
 
         <!-- Buscador y Filtros -->
-        <div class="p-4 border border-slate-800 bg-slate-900/50 rounded-xl flex flex-col md:flex-row gap-4 items-center shrink-0">
+        <div class="p-3 sm:p-4 border border-slate-800 bg-slate-900/50 rounded-xl flex flex-col sm:flex-row gap-3 sm:gap-4 items-center shrink-0">
           <div class="relative flex-1 w-full">
             <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" style="width: 16px; height: 16px;"></i>
-            <input type="text" id="search-practicos" onkeyup="renderPracticos()" placeholder="Buscar por número o palabra en el enunciado..." class="w-full pl-9 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-slate-200 focus:outline-none focus:border-blue-500 transition-colors">
+            <input type="text" id="search-practicos" onkeyup="renderPracticos()" placeholder="Buscar por número o enunciado..." class="w-full pl-9 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-blue-500 transition-colors">
           </div>
-          <div class="flex gap-2 w-full md:w-auto">
-            <select id="filter-practicos" onchange="renderPracticos()" class="w-full md:w-48 bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+          <div class="flex gap-2 w-full sm:w-auto">
+            <select id="filter-practicos" onchange="renderPracticos()" class="w-full sm:w-48 bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-blue-500">
               <option value="todos">Todos los ejercicios</option>
               <option value="pendientes">Solo Pendientes</option>
               <option value="completados">Completados</option>
@@ -631,34 +663,34 @@
         </div>
 
         <!-- Contenedor de Unidades (Acordeones) -->
-        <div id="practicos-container" class="flex-1 overflow-y-auto custom-scrollbar space-y-4 pb-4 pr-2">
+        <div id="practicos-container" class="flex-1 md:overflow-y-auto custom-scrollbar space-y-3 sm:space-y-4 pb-4 pr-0 sm:pr-2">
           <!-- Accordions generated by JS -->
         </div>
       </div>
 
-      <div id="view-objetivos" class="view-section hidden-section space-y-6 h-full flex flex-col animate-in-slide">
-        <header class="mb-4 shrink-0">
-          <h1 class="text-3xl font-bold text-slate-100 mb-1">Plan de Estudio: Final 10 de Dic</h1>
-          <p class="text-slate-400">Estrategia enfocada y cuenta regresiva para el examen.</p>
+      <div id="view-objetivos" class="view-section hidden-section space-y-4 sm:space-y-6 md:h-full flex flex-col animate-in-slide">
+        <header class="mb-2 sm:mb-4 shrink-0">
+          <h1 class="text-2xl sm:text-3xl font-bold text-slate-100 mb-1">Plan de Estudio: Final 10 de Dic</h1>
+          <p class="text-xs sm:text-sm text-slate-400">Estrategia enfocada y cuenta regresiva para el examen.</p>
         </header>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 shrink-0 mb-2">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-6 shrink-0 mb-2">
           <!-- Cuenta regresiva -->
-          <div class="bg-gradient-to-br from-blue-900/40 to-slate-900/80 border border-blue-800/50 rounded-xl p-6 shadow-lg backdrop-blur-sm flex flex-col items-center justify-center text-center">
-            <h3 class="text-sm font-semibold text-blue-400 uppercase tracking-wider mb-2">Cuenta Regresiva</h3>
-            <div class="text-5xl font-light text-slate-100 tracking-tighter mb-1" id="obj-countdown-days">--</div>
-            <p class="text-slate-400 font-medium">días restantes</p>
+          <div class="bg-gradient-to-br from-blue-900/40 to-slate-900/80 border border-blue-800/50 rounded-xl p-4 sm:p-6 shadow-lg backdrop-blur-sm flex flex-col items-center justify-center text-center">
+            <h3 class="text-xs sm:text-sm font-semibold text-blue-400 uppercase tracking-wider mb-2">Cuenta Regresiva</h3>
+            <div class="text-4xl sm:text-5xl font-light text-slate-100 tracking-tighter mb-1" id="obj-countdown-days">--</div>
+            <p class="text-slate-400 font-medium text-xs sm:text-sm">días restantes</p>
           </div>
           
           <!-- Foco Práctico -->
-          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-6 shadow-lg backdrop-blur-sm flex flex-col justify-center">
-            <h3 class="text-sm font-semibold text-orange-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4 sm:p-6 shadow-lg backdrop-blur-sm flex flex-col justify-center">
+            <h3 class="text-xs sm:text-sm font-semibold text-orange-400 uppercase tracking-wider mb-2 flex items-center gap-2">
               <i data-lucide="target" style="width: 16px; height: 16px;"></i> Práctico: U6, 7 y 8
             </h3>
-            <p class="text-slate-300 text-sm mb-4">Núcleo fundamental para aprobar la práctica.</p>
+            <p class="text-slate-300 text-xs sm:text-sm mb-3 sm:mb-4">Núcleo fundamental para aprobar la práctica.</p>
             <div class="flex justify-between items-end mb-1">
-              <span class="text-xl font-bold text-slate-100" id="obj-prac-text">0/0</span>
-              <span class="text-sm font-medium text-orange-400" id="obj-prac-pct">0%</span>
+              <span class="text-lg sm:text-xl font-bold text-slate-100" id="obj-prac-text">0/0</span>
+              <span class="text-xs sm:text-sm font-medium text-orange-400" id="obj-prac-pct">0%</span>
             </div>
             <div class="w-full bg-slate-800 rounded-full h-2">
               <div class="bg-orange-500 h-2 rounded-full transition-all duration-1000" id="obj-prac-bar" style="width: 0%"></div>
@@ -666,14 +698,14 @@
           </div>
 
           <!-- Foco Teórico -->
-          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-6 shadow-lg backdrop-blur-sm flex flex-col justify-center">
-            <h3 class="text-sm font-semibold text-emerald-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4 sm:p-6 shadow-lg backdrop-blur-sm flex flex-col justify-center">
+            <h3 class="text-xs sm:text-sm font-semibold text-emerald-400 uppercase tracking-wider mb-2 flex items-center gap-2">
               <i data-lucide="book-open-check" style="width: 16px; height: 16px;"></i> Demos de Finales
             </h3>
-            <p class="text-slate-300 text-sm mb-4">Demostraciones evaluadas en turnos anteriores.</p>
+            <p class="text-slate-300 text-xs sm:text-sm mb-3 sm:mb-4">Demostraciones evaluadas en turnos anteriores.</p>
             <div class="flex justify-between items-end mb-1">
-              <span class="text-xl font-bold text-slate-100" id="obj-teo-text">0/0</span>
-              <span class="text-sm font-medium text-emerald-400" id="obj-teo-pct">0%</span>
+              <span class="text-lg sm:text-xl font-bold text-slate-100" id="obj-teo-text">0/0</span>
+              <span class="text-xs sm:text-sm font-medium text-emerald-400" id="obj-teo-pct">0%</span>
             </div>
             <div class="w-full bg-slate-800 rounded-full h-2">
               <div class="bg-emerald-500 h-2 rounded-full transition-all duration-1000" id="obj-teo-bar" style="width: 0%"></div>
@@ -681,18 +713,18 @@
           </div>
         </div>
 
-        <div class="flex-1 bg-slate-900/80 border border-slate-800 rounded-xl p-6 shadow-lg backdrop-blur-sm overflow-y-auto custom-scrollbar flex flex-col">
-          <div class="flex justify-between items-center mb-6 shrink-0">
-            <h3 class="text-lg font-semibold text-slate-200">Roadmap de Exámenes Pasados</h3>
-            <button class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-md text-sm transition-colors border border-slate-700" title="Próximamente">
+        <div class="flex-1 bg-slate-900/80 border border-slate-800 rounded-xl p-4 sm:p-6 shadow-lg backdrop-blur-sm overflow-y-auto custom-scrollbar flex flex-col min-h-[220px]">
+          <div class="flex justify-between items-center mb-4 sm:mb-6 shrink-0">
+            <h3 class="text-base sm:text-lg font-semibold text-slate-200">Roadmap de Exámenes Pasados</h3>
+            <button class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-md text-xs sm:text-sm transition-colors border border-slate-700" title="Próximamente">
               <i data-lucide="plus" class="inline-block mr-1" style="width: 14px; height: 14px;"></i> Agregar Simulacro
             </button>
           </div>
           
-          <div class="text-center p-8 border-2 border-dashed border-slate-700 rounded-xl bg-slate-900/50 flex-1 flex flex-col items-center justify-center" id="obj-roadmap-placeholder">
+          <div class="text-center p-6 sm:p-8 border-2 border-dashed border-slate-700 rounded-xl bg-slate-900/50 flex-1 flex flex-col items-center justify-center" id="obj-roadmap-placeholder">
             <i data-lucide="file-text" class="mx-auto mb-3 text-slate-500" style="width: 32px; height: 32px;"></i>
-            <p class="text-slate-300 font-medium">Esperando los PDFs de finales anteriores...</p>
-            <p class="text-slate-500 text-sm mt-2">Sube los archivos al chat para diagramar tu plan de simulacros aquí.</p>
+            <p class="text-slate-300 font-medium text-sm sm:text-base">Esperando los PDFs de finales anteriores...</p>
+            <p class="text-slate-500 text-xs sm:text-sm mt-2">Sube los archivos al chat para diagramar tu plan de simulacros aquí.</p>
           </div>
         </div>
       </div>
@@ -700,23 +732,51 @@
     </div>
   </main>
 
-  <nav class="md:hidden fixed bottom-0 w-full bg-slate-900 border-t border-slate-800 flex justify-around p-2 pb-safe z-40" id="mobile-nav">
-    <!-- Nav items populated by JS -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 w-full bg-slate-900/95 backdrop-blur-lg border-t border-slate-800 flex justify-around items-center px-1 py-1 pb-safe z-40 shadow-2xl" id="mobile-nav">
+    <!-- Populated by JS -->
   </nav>
 
-  <!-- Modal Tema -->
-  <div id="modal-tema" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in-fade">
-    <div class="bg-slate-900 border border-slate-700 rounded-xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-      <div class="flex justify-between items-center p-4 border-b border-slate-800 bg-slate-900/50">
-        <h3 class="text-lg font-semibold text-slate-100" id="modal-title">Nuevo Tema</h3>
-        <button onclick="closeTemaModal()" class="text-slate-400 hover:text-slate-200 transition-colors">
+  <!-- Mobile Navigation Drawer / Menu Modal -->
+  <div id="mobile-drawer" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden md:hidden transition-opacity" onclick="if(event.target === this) toggleMobileDrawer()">
+    <div class="absolute inset-y-0 right-0 max-w-xs w-full bg-slate-900 border-l border-slate-800 shadow-2xl flex flex-col p-4 animate-in-slide">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-900/50">
+            <i data-lucide="book-marked" class="text-white" style="width: 18px; height: 18px;"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-100 text-base">Estadística 3</h3>
+            <p class="text-xs text-slate-500">Todas las secciones</p>
+          </div>
+        </div>
+        <button onclick="toggleMobileDrawer()" class="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors">
           <i data-lucide="x" style="width: 20px; height: 20px;"></i>
         </button>
       </div>
-      <div class="p-4 overflow-y-auto custom-scrollbar flex-1">
-        <form id="form-tema" onsubmit="handleSaveTema(event)" class="space-y-4">
+
+      <nav class="flex-1 overflow-y-auto custom-scrollbar py-3 space-y-1.5" id="mobile-drawer-nav">
+        <!-- Rendered by JS with all 8 tabs -->
+      </nav>
+
+      <div class="pt-3 border-t border-slate-800 text-center">
+        <p class="text-xs text-slate-500 font-medium">Dashboard Estadística 3</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Tema -->
+  <div id="modal-tema" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-sm animate-in-fade">
+    <div class="bg-slate-900 border border-slate-700 rounded-xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[90vh]">
+      <div class="flex justify-between items-center p-3.5 sm:p-4 border-b border-slate-800 bg-slate-900/50">
+        <h3 class="text-base sm:text-lg font-semibold text-slate-100" id="modal-title">Nuevo Tema</h3>
+        <button onclick="closeTemaModal()" class="text-slate-400 hover:text-slate-200 transition-colors p-1">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+      <div class="p-3.5 sm:p-4 overflow-y-auto custom-scrollbar flex-1">
+        <form id="form-tema" onsubmit="handleSaveTema(event)" class="space-y-3 sm:space-y-4">
           <input type="hidden" id="tema-id" value="">
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label class="block text-xs font-medium text-slate-400 mb-1">Unidad</label>
               <input required type="text" id="tema-unidad" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500 transition-colors" placeholder="Ej: 1, 2A" />
@@ -737,7 +797,7 @@
             <label class="block text-xs font-medium text-slate-400 mb-1">Subtema (Opcional)</label>
             <input type="text" id="tema-subtema" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500 transition-colors" />
           </div>
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label class="block text-xs font-medium text-slate-400 mb-1">Estado</label>
               <select id="tema-estado" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
@@ -762,9 +822,43 @@
             <label class="block text-xs font-medium text-slate-400 mb-1">Fecha Próximo Repaso</label>
             <input type="date" id="tema-repaso" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-blue-500 custom-calendar" />
           </div>
-          <div class="mt-6 flex justify-end gap-3 pt-4 border-t border-slate-800">
-            <button type="button" onclick="closeTemaModal()" class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/50">Cancelar</button>
-            <button type="submit" class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 text-sm bg-blue-600 text-white hover:bg-blue-500 shadow-md shadow-blue-900/20">Guardar Tema</button>
+          <div class="mt-4 sm:mt-6 flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-slate-800">
+            <button type="button" onclick="closeTemaModal()" class="w-full sm:w-auto flex items-center justify-center px-4 py-2 rounded-lg font-medium transition-all duration-300 text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/50">Cancelar</button>
+            <button type="submit" class="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 text-sm bg-blue-600 text-white hover:bg-blue-500 shadow-md shadow-blue-900/20">Guardar Tema</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Importar Lista -->
+  <div id="modal-importar-lista" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-sm animate-in-fade">
+    <div class="bg-slate-900 border border-slate-700 rounded-xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[90vh]">
+      <div class="flex justify-between items-center p-3.5 sm:p-4 border-b border-slate-800 bg-slate-900/50">
+        <div class="flex items-center gap-2">
+          <i data-lucide="clipboard-list" class="text-blue-400" style="width: 20px; height: 20px;"></i>
+          <h3 class="text-base sm:text-lg font-semibold text-slate-100">Importar Lista de Temas</h3>
+        </div>
+        <button onclick="closeImportarListaModal()" class="text-slate-400 hover:text-slate-200 transition-colors p-1">
+          <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+        </button>
+      </div>
+      <div class="p-3.5 sm:p-4 overflow-y-auto custom-scrollbar flex-1">
+        <form onsubmit="handleImportarLista(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">
+              Pegá tu programa o lista de temas (una línea por tema):
+            </label>
+            <p class="text-xs text-slate-500 mb-2">Las líneas que incluyan la palabra "Unidad" definirán un nuevo grupo.</p>
+            <textarea id="import-textarea" rows="7" required placeholder="Unidad 1: Espacio Probabilístico&#10;Experimento aleatorio&#10;Espacio muestral&#10;Unidad 2: Variables Aleatorias" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm text-slate-200 focus:outline-none focus:border-blue-500 font-mono resize-y"></textarea>
+          </div>
+          <div class="flex justify-between items-center text-xs text-slate-500">
+            <span id="import-preview-count">0 líneas</span>
+            <span class="text-slate-400">Formato automático</span>
+          </div>
+          <div class="mt-4 sm:mt-6 flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-slate-800">
+            <button type="button" onclick="closeImportarListaModal()" class="w-full sm:w-auto px-4 py-2 rounded-lg font-medium text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/50">Cancelar</button>
+            <button type="submit" id="btn-import-submit" class="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium text-sm bg-blue-600 text-white hover:bg-blue-500 shadow-md shadow-blue-900/20">Importar Temas</button>
           </div>
         </form>
       </div>
@@ -772,27 +866,27 @@
   </div>
 
   <!-- Modal Ejercicio Práctico -->
-  <div id="modal-ejercicio-practico" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 bg-slate-950/90 backdrop-blur-sm animate-in-fade">
-    <div class="bg-slate-900 border border-slate-700 rounded-xl w-full max-w-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-      <div class="flex justify-between items-center p-5 border-b border-slate-800 bg-slate-900/80">
+  <div id="modal-ejercicio-practico" class="fixed inset-0 z-[60] hidden items-center justify-center p-3 sm:p-4 bg-slate-950/90 backdrop-blur-sm animate-in-fade">
+    <div class="bg-slate-900 border border-slate-700 rounded-xl w-full max-w-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[90vh]">
+      <div class="flex justify-between items-center p-4 sm:p-5 border-b border-slate-800 bg-slate-900/80">
         <div>
           <span class="text-xs font-semibold text-blue-400 uppercase tracking-wider block mb-1" id="modal-ejercicio-unidad">Unidad X</span>
-          <h3 class="text-xl font-bold text-slate-100" id="modal-ejercicio-titulo">Ejercicio N</h3>
+          <h3 class="text-lg sm:text-xl font-bold text-slate-100" id="modal-ejercicio-titulo">Ejercicio N</h3>
         </div>
         <button onclick="closeEjercicioModal()" class="text-slate-400 hover:text-slate-200 transition-colors p-2 bg-slate-800/50 hover:bg-slate-800 rounded-lg">
           <i data-lucide="x" style="width: 20px; height: 20px;"></i>
         </button>
       </div>
       
-      <div class="p-6 overflow-y-auto custom-scrollbar flex-1 bg-slate-950/50">
+      <div class="p-4 sm:p-6 overflow-y-auto custom-scrollbar flex-1 bg-slate-950/50">
         <div id="modal-ejercicio-contenido" class="text-slate-300 text-sm leading-relaxed markdown-content">
           <!-- Markdown Rendered Here -->
         </div>
       </div>
       
-      <div class="p-5 border-t border-slate-800 bg-slate-900/80 flex justify-between items-center">
+      <div class="p-4 sm:p-5 border-t border-slate-800 bg-slate-900/80 flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-3">
         <label class="flex items-center gap-3 cursor-pointer group">
-          <div class="relative flex items-center justify-center w-6 h-6 rounded border border-slate-600 bg-slate-950 group-hover:border-blue-500 transition-colors">
+          <div class="relative flex items-center justify-center w-6 h-6 rounded border border-slate-600 bg-slate-950 group-hover:border-blue-500 transition-colors shrink-0">
             <input type="checkbox" id="modal-ejercicio-checkbox" class="peer sr-only" onchange="toggleEjercicioDesdeModal(this)">
             <i data-lucide="check" class="text-white opacity-0 peer-checked:opacity-100 transition-opacity" style="width: 14px; height: 14px;"></i>
             <div class="absolute inset-0 rounded bg-blue-500 opacity-0 peer-checked:opacity-100 transition-opacity -z-10"></div>
@@ -800,7 +894,7 @@
           <span class="text-sm font-medium text-slate-300 group-hover:text-slate-200 transition-colors">Marcar como completado</span>
         </label>
         
-        <button onclick="closeEjercicioModal()" class="px-5 py-2 rounded-lg font-medium transition-all duration-300 text-sm bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700">
+        <button onclick="closeEjercicioModal()" class="w-full sm:w-auto px-5 py-2 rounded-lg font-medium transition-all duration-300 text-sm bg-slate-800 text-slate-200 hover:bg-slate-700 border border-slate-700">
           Cerrar
         </button>
       </div>
@@ -808,30 +902,30 @@
   </div>
 
   <!-- Focus Mode Overlay -->
-  <div id="focus-overlay" class="fixed inset-0 z-[100] bg-slate-950 hidden flex-col items-center justify-center animate-in-fade">
-    <button onclick="exitFocusMode()" class="absolute top-8 right-8 text-slate-500 hover:text-slate-300 transition-colors">
+  <div id="focus-overlay" class="fixed inset-0 z-[100] bg-slate-950 hidden flex-col items-center justify-center animate-in-fade p-4">
+    <button onclick="exitFocusMode()" class="absolute top-4 right-4 sm:top-8 sm:right-8 text-slate-500 hover:text-slate-300 transition-colors p-2" aria-label="Salir de Modo Enfoque">
       <i data-lucide="minimize-2" style="width: 24px; height: 24px;"></i>
     </button>
     
-    <div class="text-center">
-      <p class="text-blue-400 font-medium tracking-widest uppercase mb-4 text-sm" id="focus-mode-label">
+    <div class="text-center w-full max-w-lg">
+      <p class="text-blue-400 font-medium tracking-widest uppercase mb-3 sm:mb-4 text-xs sm:text-sm" id="focus-mode-label">
         Modo Enfoque
       </p>
-      <div class="text-9xl font-light text-slate-100 tracking-tighter tabular-nums mb-12" style="font-variant-numeric: tabular-nums;" id="focus-time-display">
+      <div class="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-light text-slate-100 tracking-tighter tabular-nums mb-8 sm:mb-12 select-none" style="font-variant-numeric: tabular-nums;" id="focus-time-display">
         25:00
       </div>
       
-      <div class="text-xl text-slate-400 mb-12" id="focus-tema-container" style="display: none;">
+      <div class="text-base sm:text-xl text-slate-400 mb-8 sm:mb-12 px-4 truncate" id="focus-tema-container" style="display: none;">
         Estudiando: <span class="text-slate-200 font-medium" id="focus-tema-name"></span>
       </div>
 
-      <div class="flex gap-6 justify-center">
-        <button id="btn-focus-toggle" class="w-20 h-20 rounded-full flex items-center justify-center transition-all bg-blue-600 text-white hover:bg-blue-500 shadow-lg shadow-blue-900/20">
-          <i data-lucide="play" id="focus-icon-play" style="width: 32px; height: 32px; margin-left: 8px;"></i>
-          <i data-lucide="pause" id="focus-icon-pause" style="width: 32px; height: 32px; display: none;"></i>
+      <div class="flex gap-4 sm:gap-6 justify-center">
+        <button id="btn-focus-toggle" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center transition-all bg-blue-600 text-white hover:bg-blue-500 shadow-lg shadow-blue-900/20 active:scale-95">
+          <i data-lucide="play" id="focus-icon-play" style="width: 26px; height: 26px; margin-left: 4px;"></i>
+          <i data-lucide="pause" id="focus-icon-pause" style="width: 26px; height: 26px; display: none;"></i>
         </button>
-        <button id="btn-focus-reset" class="w-20 h-20 rounded-full flex items-center justify-center bg-slate-900 text-slate-500 border border-slate-800 hover:text-slate-300 hover:bg-slate-800 transition-all">
-          <i data-lucide="rotate-ccw" style="width: 28px; height: 28px;"></i>
+        <button id="btn-focus-reset" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center bg-slate-900 text-slate-500 border border-slate-800 hover:text-slate-300 hover:bg-slate-800 transition-all active:scale-95">
+          <i data-lucide="rotate-ccw" style="width: 24px; height: 24px;"></i>
         </button>
       </div>
     </div>
@@ -839,14 +933,14 @@
 
   <!-- Alarm Notification Modal -->
   <div id="alarm-modal" class="fixed inset-0 z-[150] bg-slate-950/85 backdrop-blur-md hidden flex-col items-center justify-center animate-in-fade p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 max-w-md w-full shadow-2xl flex flex-col items-center text-center relative overflow-hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 max-w-md w-full shadow-2xl flex flex-col items-center text-center relative overflow-hidden">
       <!-- Glow effect -->
       <div id="alarm-modal-glow" class="absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-48 bg-blue-500/20 rounded-full blur-2xl pointer-events-none"></div>
 
       <!-- Ringing Bell Icon -->
-      <div class="relative mb-6">
-        <div id="alarm-icon-box" class="w-20 h-20 rounded-full bg-blue-500/10 border border-blue-500/30 flex items-center justify-center shadow-lg">
-          <i data-lucide="bell" id="alarm-icon" class="text-blue-400 animate-bounce" style="width: 36px; height: 36px;"></i>
+      <div class="relative mb-5 sm:mb-6">
+        <div id="alarm-icon-box" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-blue-500/10 border border-blue-500/30 flex items-center justify-center shadow-lg">
+          <i data-lucide="bell" id="alarm-icon" class="text-blue-400 animate-bounce" style="width: 32px; height: 32px;"></i>
         </div>
         <span class="absolute top-0 right-0 flex h-4 w-4">
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
@@ -855,13 +949,13 @@
       </div>
 
       <!-- Title & description -->
-      <h3 id="alarm-modal-title" class="text-2xl font-bold text-slate-100 mb-2">¡Tiempo Completado!</h3>
-      <p id="alarm-modal-desc" class="text-slate-400 text-sm mb-8 leading-relaxed">
+      <h3 id="alarm-modal-title" class="text-xl sm:text-2xl font-bold text-slate-100 mb-2">¡Tiempo Completado!</h3>
+      <p id="alarm-modal-desc" class="text-slate-400 text-xs sm:text-sm mb-6 sm:mb-8 leading-relaxed">
         Has finalizado tu tiempo programado.
       </p>
 
       <!-- Action buttons -->
-      <div class="flex flex-col sm:flex-row gap-3 w-full justify-center">
+      <div class="flex flex-col sm:flex-row gap-2.5 sm:gap-3 w-full justify-center">
         <button id="alarm-btn-action" onclick="acceptAlarmAndStartNext()" class="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-semibold transition-all duration-200 bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/30">
           <i data-lucide="play" style="width: 18px; height: 18px;"></i>
           <span id="alarm-btn-action-text">Comenzar Siguiente</span>
@@ -2147,9 +2241,22 @@ Demuestre que:
       if (id.includes('prac')) renderPracticos();
     };
 
+    const toggleMobileDrawer = () => {
+      const drawer = document.getElementById('mobile-drawer');
+      if (!drawer) return;
+      drawer.classList.toggle('hidden');
+    };
+
     const renderNavigation = () => {
       const desktopNav = document.getElementById('desktop-nav');
       const mobileNav = document.getElementById('mobile-nav');
+      const mobileDrawerNav = document.getElementById('mobile-drawer-nav');
+      const mobileCurrentBadge = document.getElementById('mobile-current-tab-badge');
+
+      const currentTabObj = TABS.find(t => t.id === activeTab);
+      if (mobileCurrentBadge && currentTabObj) {
+        mobileCurrentBadge.innerText = currentTabObj.label;
+      }
       
       if(desktopNav) {
         desktopNav.innerHTML = TABS.map(tab => {
@@ -2170,16 +2277,56 @@ Demuestre que:
         }).join('');
       }
 
-      if(mobileNav) {
-        mobileNav.innerHTML = TABS.slice(0, 5).map(tab => {
+      if(mobileDrawerNav) {
+        mobileDrawerNav.innerHTML = TABS.map(tab => {
           const isActive = activeTab === tab.id;
           return `
-            <button onclick="setActiveTab('${tab.id}')" class="p-3 rounded-xl flex flex-col items-center gap-1 transition-colors ${isActive ? 'text-blue-400' : 'text-slate-500'}">
-              <i data-lucide="${tab.icon}" style="width: 20px; height: 20px;"></i>
-              <span class="text-[10px] font-medium">${tab.label.substring(0, 4)}.</span>
+            <button
+              onclick="setActiveTab('${tab.id}'); toggleMobileDrawer();"
+              class="w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-medium transition-all
+                ${isActive ? 'bg-blue-600/15 text-blue-400 border border-blue-500/30 font-semibold' : 'text-slate-300 hover:bg-slate-800/60 hover:text-white border border-transparent'}"
+            >
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg flex items-center justify-center ${isActive ? 'bg-blue-600/20 text-blue-400' : 'bg-slate-800/80 text-slate-400'}">
+                  <i data-lucide="${tab.icon}" style="width: 18px; height: 18px;"></i>
+                </div>
+                <span>${tab.label}</span>
+              </div>
+              ${isActive ? '<span class="w-2 h-2 rounded-full bg-blue-400"></span>' : '<i data-lucide="chevron-right" class="text-slate-600" style="width: 16px; height: 16px;"></i>'}
             </button>
           `;
         }).join('');
+      }
+
+      if(mobileNav) {
+        const primaryTabIds = ['dashboard', 'temario', 'practicos', 'pomodoro'];
+        const isMoreActive = !primaryTabIds.includes(activeTab);
+
+        const primaryButtons = primaryTabIds.map(id => {
+          const tab = TABS.find(t => t.id === id);
+          const isActive = activeTab === tab.id;
+          return `
+            <button onclick="setActiveTab('${tab.id}')" class="flex-1 py-1 px-1 rounded-xl flex flex-col items-center justify-center gap-1 transition-all ${isActive ? 'text-blue-400 font-semibold' : 'text-slate-400 hover:text-slate-200'}" aria-label="${tab.label}">
+              <div class="relative flex items-center justify-center">
+                <i data-lucide="${tab.icon}" style="width: 20px; height: 20px;"></i>
+                ${isActive ? '<span class="absolute -bottom-1 w-1 h-1 rounded-full bg-blue-400"></span>' : ''}
+              </div>
+              <span class="text-[10px] leading-tight tracking-tight">${tab.label}</span>
+            </button>
+          `;
+        }).join('');
+
+        const moreButton = `
+          <button onclick="toggleMobileDrawer()" class="flex-1 py-1 px-1 rounded-xl flex flex-col items-center justify-center gap-1 transition-all ${isMoreActive ? 'text-blue-400 font-semibold' : 'text-slate-400 hover:text-slate-200'}" aria-label="Menú Completo">
+            <div class="relative flex items-center justify-center">
+              <i data-lucide="grid" style="width: 20px; height: 20px;"></i>
+              ${isMoreActive ? '<span class="absolute -bottom-1 w-1 h-1 rounded-full bg-blue-400"></span>' : ''}
+            </div>
+            <span class="text-[10px] leading-tight tracking-tight">Menú</span>
+          </button>
+        `;
+
+        mobileNav.innerHTML = primaryButtons + moreButton;
       }
       
       lucide.createIcons();
@@ -2190,7 +2337,7 @@ Demuestre que:
       if (!container) return;
 
       if (state.temas.length === 0) {
-          container.innerHTML = `<div class="text-center p-12 text-slate-500">No hay temas registrados. Agrega uno o importa tu lista.</div>`;
+          container.innerHTML = `<div class="text-center p-8 sm:p-12 text-slate-500">No hay temas registrados. Agrega uno o importa tu lista.</div>`;
           return;
       }
 
@@ -2214,14 +2361,14 @@ Demuestre que:
 
           html += `
           <div class="bg-slate-900/80 border ${estaCompletada ? 'border-emerald-900/50' : 'border-slate-800'} rounded-xl overflow-hidden shadow-lg backdrop-blur-sm transition-all duration-300">
-            <button class="w-full flex justify-between items-center p-4 bg-slate-900/90 hover:bg-slate-800 transition-colors text-left group border-b ${isOpen ? (estaCompletada ? 'border-emerald-900/50' : 'border-slate-800') : 'border-transparent'}" onclick="toggleAccordion('${accId}')">
-              <div class="flex flex-col gap-2">
+            <button class="w-full flex justify-between items-center p-3.5 sm:p-4 bg-slate-900/90 hover:bg-slate-800 transition-colors text-left group border-b ${isOpen ? (estaCompletada ? 'border-emerald-900/50' : 'border-slate-800') : 'border-transparent'}" onclick="toggleAccordion('${accId}')">
+              <div class="flex flex-col gap-1.5 sm:gap-2">
                 <div class="flex items-center gap-2">
-                  <h2 class="text-base font-bold text-slate-100 group-hover:text-blue-400 transition-colors">${uni}</h2>
+                  <h2 class="text-sm sm:text-base font-bold text-slate-100 group-hover:text-blue-400 transition-colors">${uni}</h2>
                   ${estaCompletada ? '<span class="bg-emerald-900/30 text-emerald-400 text-[10px] uppercase font-bold px-2 py-0.5 rounded flex items-center gap-1"><i data-lucide="check-circle-2" style="width: 12px; height: 12px;"></i> Dominado</span>' : ''}
                 </div>
-                <div class="flex items-center gap-3 text-xs text-slate-500 font-medium">
-                  <div class="w-24 h-1.5 bg-slate-800 rounded-full overflow-hidden shadow-inner">
+                <div class="flex items-center gap-2.5 sm:gap-3 text-xs text-slate-500 font-medium">
+                  <div class="w-20 sm:w-24 h-1.5 bg-slate-800 rounded-full overflow-hidden shadow-inner">
                      <div class="h-full ${estaCompletada ? 'bg-emerald-500' : 'bg-blue-500'} rounded-full transition-all duration-500" style="width: ${pct}%"></div>
                   </div>
                   <span>${dominados}/${temasUni.length} temas (${pct}%)</span>
@@ -2233,8 +2380,8 @@ Demuestre que:
             </button>
             
             <div class="${isOpen ? '' : 'hidden'}">
-              <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-slate-400 border-collapse">
+              <div class="overflow-x-auto custom-scrollbar -mx-1 sm:mx-0">
+                <table class="w-full text-left text-sm text-slate-400 border-collapse min-w-[560px]">
                   <thead class="bg-slate-900/40 border-b border-slate-800/80 uppercase text-[10px] tracking-wider font-semibold">
                     <tr>
                       <th class="px-4 py-3">Tema</th>
@@ -2271,9 +2418,9 @@ Demuestre que:
                           </td>
                           <td class="px-4 py-3 text-xs">${t.proximoRepaso ? formatDate(t.proximoRepaso) : '-'}</td>
                           <td class="px-4 py-3 text-right">
-                            <div class="flex justify-end gap-2 opacity-0 group-hover/row:opacity-100 transition-opacity">
-                              <button onclick="openTemaModal('${t.id}')" class="p-1.5 text-slate-400 hover:text-blue-400 bg-slate-800 rounded hover:bg-slate-700 transition-colors"><i data-lucide="edit-2" style="width: 14px; height: 14px;"></i></button>
-                              <button onclick="deleteTema('${t.id}')" class="p-1.5 text-slate-400 hover:text-red-400 bg-slate-800 rounded hover:bg-slate-700 transition-colors"><i data-lucide="trash-2" style="width: 14px; height: 14px;"></i></button>
+                            <div class="flex justify-end gap-1.5 opacity-100 sm:opacity-0 sm:group-hover/row:opacity-100 transition-opacity">
+                              <button onclick="openTemaModal('${t.id}')" class="p-1.5 text-slate-400 hover:text-blue-400 bg-slate-800 rounded hover:bg-slate-700 transition-colors" title="Editar"><i data-lucide="edit-2" style="width: 14px; height: 14px;"></i></button>
+                              <button onclick="deleteTema('${t.id}')" class="p-1.5 text-slate-400 hover:text-red-400 bg-slate-800 rounded hover:bg-slate-700 transition-colors" title="Eliminar"><i data-lucide="trash-2" style="width: 14px; height: 14px;"></i></button>
                             </div>
                           </td>
                         </tr>
@@ -3215,15 +3362,15 @@ Demuestre que:
       const summaryContainer = document.getElementById('stats-pomodoro-summary');
       if (summaryContainer) {
         summaryContainer.innerHTML = `
-          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-5 shadow-lg backdrop-blur-sm relative overflow-hidden">
+          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4 sm:p-5 shadow-lg backdrop-blur-sm relative overflow-hidden">
             <div class="absolute top-0 left-0 w-1 h-full bg-blue-600/50"></div>
-            <div class="text-slate-400 text-sm mb-1">Tiempo Total en Pomodoros</div>
-            <div class="text-4xl font-bold text-blue-400">${formatDuracion(totalMinutosPomodoro)}</div>
+            <div class="text-slate-400 text-xs sm:text-sm mb-1 truncate">Tiempo Total en Pomodoros</div>
+            <div class="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-400">${formatDuracion(totalMinutosPomodoro)}</div>
           </div>
-          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-5 shadow-lg backdrop-blur-sm relative overflow-hidden">
+          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4 sm:p-5 shadow-lg backdrop-blur-sm relative overflow-hidden">
             <div class="absolute top-0 left-0 w-1 h-full bg-purple-600/50"></div>
-            <div class="text-slate-400 text-sm mb-1">Pomodoros Completados</div>
-            <div class="text-4xl font-bold text-slate-100">${totalPomodoros}</div>
+            <div class="text-slate-400 text-xs sm:text-sm mb-1 truncate">Pomodoros Completados</div>
+            <div class="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-100">${totalPomodoros}</div>
           </div>
         `;
       }
@@ -3304,10 +3451,10 @@ Demuestre que:
         donutContainer.innerHTML = `<div class="h-full flex items-center justify-center text-slate-500 italic">No hay pomodoros registrados</div>`;
       } else {
         donutContainer.innerHTML = `
-          <div class="relative w-40 h-40 rounded-full mb-5 shrink-0 shadow-lg shadow-black/20" style="background: conic-gradient(${conicStops})">
+          <div class="relative w-36 h-36 sm:w-40 sm:h-40 rounded-full mb-5 shrink-0 shadow-lg shadow-black/20" style="background: conic-gradient(${conicStops})">
             <div class="absolute inset-2 bg-slate-900 rounded-full flex flex-col items-center justify-center">
-              <span class="text-xl font-bold text-slate-100">${formatDuracion(totalMinutosPomodoro)}</span>
-              <span class="text-xs text-slate-500 uppercase tracking-wider">${totalPomodoros} pomodoro${totalPomodoros === 1 ? '' : 's'}</span>
+              <span class="text-lg sm:text-xl font-bold text-slate-100">${formatDuracion(totalMinutosPomodoro)}</span>
+              <span class="text-[10px] sm:text-xs text-slate-500 uppercase tracking-wider">${totalPomodoros} pomodoro${totalPomodoros === 1 ? '' : 's'}</span>
             </div>
           </div>
           <div class="flex flex-col gap-1 w-full flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1">
@@ -3316,13 +3463,13 @@ Demuestre que:
                 <div class="flex items-center gap-2 min-w-0">
                   <div class="w-2.5 h-2.5 rounded-full shadow-sm shrink-0" style="background-color: ${d.color}"></div>
                   <div class="min-w-0">
-                    <p class="text-sm text-slate-200 truncate" title="${d.label}">${d.label}</p>
-                    <p class="text-xs text-slate-500 truncate">${d.unidad || 'Sin unidad asignada'}</p>
+                    <p class="text-xs sm:text-sm text-slate-200 truncate" title="${d.label}">${d.label}</p>
+                    <p class="text-[10px] sm:text-xs text-slate-500 truncate">${d.unidad || 'Sin unidad asignada'}</p>
                   </div>
                 </div>
                 <div class="text-right shrink-0">
-                  <p class="text-sm font-semibold text-slate-200">${formatDuracion(d.minutos)}</p>
-                  <p class="text-xs text-slate-500">${d.count} pomodoro${d.count === 1 ? '' : 's'}</p>
+                  <p class="text-xs sm:text-sm font-semibold text-slate-200">${formatDuracion(d.minutos)}</p>
+                  <p class="text-[10px] sm:text-xs text-slate-500">${d.count} pomodoro${d.count === 1 ? '' : 's'}</p>
                 </div>
               </div>
             `).join('')}
@@ -3336,6 +3483,10 @@ Demuestre que:
       renderNavigation();
       updateViewData(tabId);
       
+      // Reset scroll to top on view change
+      const scrollContainer = document.querySelector('main > div');
+      if (scrollContainer) scrollContainer.scrollTop = 0;
+
       // Mostrar/ocultar secciones
       document.querySelectorAll('.view-section').forEach(el => {
         if (el.id === `view-${tabId}`) {
@@ -3550,12 +3701,12 @@ Demuestre que:
             
             <div id="content-${unidadAccId}" class="${isOpen ? '' : 'hidden'}">
               <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-slate-400 border-collapse">
+                <table class="w-full text-left text-sm text-slate-400 border-collapse min-w-[340px] sm:min-w-full">
                   <thead class="bg-slate-900/40 border-b border-slate-800/80 uppercase text-[10px] tracking-wider font-semibold">
                     <tr>
-                      <th class="px-4 py-3 w-12 text-center">Estado</th>
-                      <th class="px-4 py-3">Ejercicio</th>
-                      <th class="px-4 py-3 text-right">Acción</th>
+                      <th class="px-2.5 sm:px-4 py-2.5 sm:py-3 w-10 sm:w-12 text-center">Estado</th>
+                      <th class="px-2.5 sm:px-4 py-2.5 sm:py-3">Ejercicio</th>
+                      <th class="px-2.5 sm:px-4 py-2.5 sm:py-3 text-right">Acción</th>
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-slate-800/50">
@@ -3567,19 +3718,21 @@ Demuestre que:
                       
                       return `
                         <tr class="${completado ? 'bg-slate-900/30' : 'hover:bg-slate-800/40'} transition-colors group/row cursor-pointer" onclick="openEjercicioModal('${ej.id}')">
-                          <td class="px-4 py-3 text-center" onclick="event.stopPropagation()">
+                          <td class="px-2.5 sm:px-4 py-2.5 sm:py-3 text-center" onclick="event.stopPropagation()">
                             <label class="relative flex items-center justify-center w-5 h-5 rounded border ${completado ? 'border-blue-500 bg-blue-500' : 'border-slate-600 bg-slate-950'} hover:border-blue-400 cursor-pointer transition-colors">
                               <input type="checkbox" class="peer sr-only" ${completado ? 'checked' : ''} onchange="toggleEjercicio('${ej.id}')">
                               <i data-lucide="check" class="text-white opacity-0 peer-checked:opacity-100 transition-opacity" style="width: 12px; height: 12px;"></i>
                             </label>
                           </td>
-                          <td class="px-4 py-3">
-                            <span class="font-bold block ${completado ? 'text-slate-500 line-through' : 'text-slate-200'} transition-colors">Ejercicio ${ej.numero}</span>
-                            <span class="text-xs text-slate-500 mt-0.5 block truncate max-w-sm md:max-w-2xl">${previewText}</span>
+                          <td class="px-2.5 sm:px-4 py-2.5 sm:py-3">
+                            <span class="font-bold text-xs sm:text-sm block ${completado ? 'text-slate-500 line-through' : 'text-slate-200'} transition-colors">Ejercicio ${ej.numero}</span>
+                            <span class="text-[11px] sm:text-xs text-slate-500 mt-0.5 block truncate max-w-[180px] sm:max-w-sm md:max-w-2xl">${previewText}</span>
                           </td>
-                          <td class="px-4 py-3 text-right">
-                             <button class="px-3 py-1.5 rounded-md text-xs font-medium bg-slate-800 text-slate-300 group-hover/row:bg-blue-600 group-hover/row:text-white transition-all shadow-sm">
-                               Ver Ejercicio
+                          <td class="px-2.5 sm:px-4 py-2.5 sm:py-3 text-right whitespace-nowrap">
+                             <button class="px-2 sm:px-3 py-1 sm:py-1.5 rounded-md text-xs font-medium bg-slate-800 text-slate-300 group-hover/row:bg-blue-600 group-hover/row:text-white transition-all shadow-sm inline-flex items-center gap-1">
+                               <span class="hidden sm:inline">Ver Ejercicio</span>
+                               <span class="sm:hidden">Ver</span>
+                               <i data-lucide="chevron-right" class="w-3 h-3 text-slate-400 group-hover/row:text-white"></i>
                              </button>
                           </td>
                         </tr>
@@ -3773,24 +3926,24 @@ Demuestre que:
       document.getElementById('quote-ref').innerText = `— ${currentDailyVerse.ref}`;
 
       document.getElementById('dashboard-stats').innerHTML = `
-        <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-5 shadow-lg backdrop-blur-sm">
-          <div class="text-slate-400 text-sm mb-1">Progreso General</div>
-          <div class="text-3xl font-bold text-blue-400">${progresoGeneral}%</div>
-          <div class="w-full bg-slate-800 rounded-full h-1.5 mt-3">
+        <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5 sm:p-5 shadow-lg backdrop-blur-sm">
+          <div class="text-slate-400 text-xs sm:text-sm mb-1 truncate">Progreso General</div>
+          <div class="text-2xl sm:text-3xl font-bold text-blue-400">${progresoGeneral}%</div>
+          <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2 sm:mt-3">
             <div class="bg-blue-500 h-1.5 rounded-full transition-all duration-1000" style="width: ${progresoGeneral}%"></div>
           </div>
         </div>
-        <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-5 shadow-lg backdrop-blur-sm">
-          <div class="text-slate-400 text-sm mb-1">Temas Dominados</div>
-          <div class="text-3xl font-bold text-slate-100">${dominados} <span class="text-sm font-normal text-slate-500">/ ${totalTemas}</span></div>
+        <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5 sm:p-5 shadow-lg backdrop-blur-sm">
+          <div class="text-slate-400 text-xs sm:text-sm mb-1 truncate">Temas Dominados</div>
+          <div class="text-2xl sm:text-3xl font-bold text-slate-100">${dominados} <span class="text-xs sm:text-sm font-normal text-slate-500">/ ${totalTemas}</span></div>
         </div>
-        <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-5 shadow-lg backdrop-blur-sm">
-          <div class="text-slate-400 text-sm mb-1">Horas Semanales</div>
-          <div class="text-3xl font-bold text-slate-100">${horasSemana}h</div>
+        <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5 sm:p-5 shadow-lg backdrop-blur-sm">
+          <div class="text-slate-400 text-xs sm:text-sm mb-1 truncate">Horas Semanales</div>
+          <div class="text-2xl sm:text-3xl font-bold text-slate-100">${horasSemana}h</div>
         </div>
-        <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-5 shadow-lg backdrop-blur-sm">
-          <div class="text-slate-400 text-sm mb-1">Prácticos Resueltos</div>
-          <div class="text-3xl font-bold text-slate-100">${state.practicosCompletados ? state.practicosCompletados.length : 0}</div>
+        <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5 sm:p-5 shadow-lg backdrop-blur-sm">
+          <div class="text-slate-400 text-xs sm:text-sm mb-1 truncate">Prácticos Resueltos</div>
+          <div class="text-2xl sm:text-3xl font-bold text-slate-100">${state.practicosCompletados ? state.practicosCompletados.length : 0}</div>
         </div>
       `;
 
@@ -4493,16 +4646,16 @@ Demuestre que:
       const nombreColIndex = headers.findIndex(h => h.toLowerCase().includes('nombre') || h.toLowerCase().includes('demostración') || h.toLowerCase().includes('demostracion'));
       
       let html = `
-        <table class="w-full text-left text-sm text-slate-400 border-collapse">
+        <table class="w-full text-left text-sm text-slate-400 border-collapse min-w-[560px]">
           <thead class="bg-slate-900/90 border-b border-slate-800 uppercase text-[10px] tracking-wider font-semibold sticky top-0 z-10 backdrop-blur-md">
             <tr>
       `;
       
       headers.forEach((h, i) => {
          const isUnidad = h.toLowerCase().includes('categoría') || h.toLowerCase().includes('unidad');
-         html += `<th class="px-4 py-3 whitespace-nowrap ${i === nombreColIndex ? 'w-2/5' : ''} ${isUnidad ? 'w-20' : ''}">${h}</th>`;
+         html += `<th class="px-3 sm:px-4 py-2.5 sm:py-3 whitespace-nowrap ${i === nombreColIndex ? 'w-2/5' : ''} ${isUnidad ? 'w-20' : ''}">${h}</th>`;
          if (isTodas && i === nombreColIndex) {
-            html += `<th class="px-4 py-3 whitespace-nowrap w-32">Nivel</th>`;
+            html += `<th class="px-3 sm:px-4 py-2.5 sm:py-3 whitespace-nowrap w-28 sm:w-32">Nivel</th>`;
          }
       });
       
@@ -4526,7 +4679,7 @@ Demuestre que:
            }
 
            if (i === nombreColIndex) {
-              html += `<td class="px-4 py-3 font-medium text-slate-200">${val}</td>`;
+              html += `<td class="px-3 sm:px-4 py-2.5 sm:py-3 font-medium text-slate-200">${val}</td>`;
               if (isTodas) {
                   const safeName = (demoName || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
                   
@@ -4538,7 +4691,7 @@ Demuestre que:
                   if (currentLevel === 'Bien') colorClass = 'text-blue-400 bg-blue-950/30 border-blue-800/50';
                   if (currentLevel === 'Dominado') colorClass = 'text-emerald-400 bg-emerald-950/30 border-emerald-800/50';
 
-                  html += `<td class="px-4 py-3 whitespace-nowrap">
+                  html += `<td class="px-3 sm:px-4 py-2.5 sm:py-3 whitespace-nowrap">
                     <select onchange="window.saveNivelDemo('${safeName}', this.value)" class="w-full rounded px-2 py-1 border outline-none text-xs font-semibold cursor-pointer transition-colors ${colorClass}">
                       <option value="Pendiente" ${currentLevel === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
                       <option value="Repasar" ${currentLevel === 'Repasar' ? 'selected' : ''}>Repasar</option>
@@ -4548,7 +4701,7 @@ Demuestre que:
                   </td>`;
               }
            } else {
-              html += `<td class="px-4 py-3 whitespace-nowrap ${isUnidad ? 'text-xs text-slate-500' : ''}">${val}</td>`;
+              html += `<td class="px-3 sm:px-4 py-2.5 sm:py-3 whitespace-nowrap ${isUnidad ? 'text-xs text-slate-500' : ''}">${val}</td>`;
            }
         });
         html += `</tr>`;
